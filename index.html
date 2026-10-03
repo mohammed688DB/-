@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b6a85">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>قاعدة بيانات الفلج والطويان</title>
+<style>
+:root{--bg:#f2f6f8;--card:#fff;--ink:#1c2a33;--mut:#5d6e79;--line:#dbe3e8;--pri:#0b6a85;--pri2:#e2f0f5;--ok:#1d8048;--okbg:#e5f5ec;--warn:#9a6212;--warnbg:#fdf3e1;--bad:#b83227;--badbg:#fbe9e7;--hi:#fff7d6}
+@media (prefers-color-scheme:dark){:root{--bg:#0f161b;--card:#172129;--ink:#e5edf1;--mut:#9aabb6;--line:#293842;--pri:#3aa6c4;--pri2:#163240;--ok:#4cc27f;--okbg:#14301f;--warn:#e0a84a;--warnbg:#33280f;--bad:#ef7a6e;--badbg:#3a1a17;--hi:#3a3412}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif;font-size:15px;overflow-x:clip}
+header{background:var(--pri);color:#fff;padding:12px 16px 0}
+header h1{margin:0 0 2px;font-size:20px}
+header .sub{opacity:.85;font-size:13px;margin-bottom:10px}
+nav{display:flex;gap:4px;overflow-x:auto}
+nav button{background:transparent;color:#fff;border:0;padding:9px 14px;border-radius:10px 10px 0 0;font:inherit;cursor:pointer;white-space:nowrap;opacity:.85}
+nav button.on{background:var(--bg);color:var(--ink);opacity:1;font-weight:600}
+main{max-width:1200px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.grid>*{min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.card h2,.card h3{margin:0 0 10px;font-size:17px}
+.mut{color:var(--mut)}.small{font-size:13px}
+.big{font-size:19px;font-weight:700;margin:4px 0}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-left:6px}
+.bar{height:8px;background:var(--pri2);border-radius:6px;overflow:hidden;margin:8px 0}
+.bar>i{display:block;height:100%;background:var(--pri)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-ok{background:var(--okbg);color:var(--ok)}.b-warn{background:var(--warnbg);color:var(--warn)}.b-bad{background:var(--badbg);color:var(--bad)}
+.alert{padding:10px 12px;border-radius:10px;margin:8px 0;font-size:14px}
+.alert.warn{background:var(--warnbg);color:var(--warn)}.alert.bad{background:var(--badbg);color:var(--bad)}.alert.info{background:var(--pri2)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:right;vertical-align:top}
+th{background:var(--pri2);font-size:13px;white-space:nowrap}
+td.n{white-space:nowrap;text-align:center}
+tr.now td{background:var(--hi)}
+tr.zero td{opacity:.5}
+tr.click{cursor:pointer}tr.click:hover td{background:var(--pri2)}
+tfoot td{font-weight:700}
+button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 13px;border-radius:9px;cursor:pointer}
+button:hover{border-color:var(--pri)}
+button.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+button.bad{color:var(--bad)}
+button.ic{padding:3px 8px;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chips button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+label{display:block;margin:8px 0;font-size:14px}
+label.chk{display:flex;gap:6px;align-items:center}
+input,select,textarea{font:inherit;width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);margin-top:3px}
+input[type=checkbox]{width:auto;margin:0}
+textarea{min-height:70px}
+.f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 12px}
+.f2>*{min-width:0}
+details summary{cursor:pointer;font-weight:600;padding:4px 0}
+.units{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.units b{color:var(--pri)}
+/* timeline */
+.tl{margin-top:6px}
+.tlr{display:flex;align-items:center;gap:8px;margin:3px 0}
+.tld{width:62px;flex:none;font-size:13px;color:var(--mut)}
+.tlb{position:relative;flex:1;height:26px;background:var(--pri2);border-radius:5px;overflow:hidden;min-width:0}
+.seg{position:absolute;top:0;bottom:0;color:#fff;font-size:11px;line-height:26px;padding:0 4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-left:1px solid rgba(255,255,255,.6)}
+.nowl{position:absolute;top:0;bottom:0;width:3px;background:#e11;box-shadow:0 0 0 1px #fff}
+.tlx{position:relative;flex:1;height:16px;font-size:11px;color:var(--mut)}
+.tlx span{position:absolute;transform:translateX(50%)}
+/* modal */
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-start;justify-content:center;padding:30px 12px;overflow:auto;z-index:20}
+#ov.on{display:flex}
+#md{background:var(--card);border-radius:14px;padding:16px 18px;width:100%;max-width:560px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 16px;border-radius:9px;display:none;z-index:30}
+#print{display:none}
+/* التقارير */
+:root{--pri3:#a9d6e3}
+@media (prefers-color-scheme:dark){:root{--pri3:#24576a}}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.tiles>*{min-width:0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.tile .v{font-size:22px;font-weight:700}.tile .l{font-size:12px;color:var(--mut)}.tile .s{font-size:12px;color:var(--mut)}
+.hb{display:flex;align-items:center;gap:8px;margin:5px 0}
+.hbn{width:36%;min-width:0;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbt{flex:1;height:14px;min-width:0}
+.hbt i{display:block;height:100%;background:var(--pri);border-start-end-radius:4px;border-end-end-radius:4px}
+.hbt i.un{background:repeating-linear-gradient(45deg,var(--mut) 0 3px,transparent 3px 6px)}
+.hbv{width:118px;flex:none;font-size:12px;color:var(--mut);white-space:nowrap}
+.cc{display:flex;align-items:flex-end;gap:6px;height:190px;border-bottom:1px solid var(--line);padding-top:22px}
+.ccc{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;min-width:0;cursor:default}
+.ccc i{display:block}
+.ccc i.p{background:var(--pri)}.ccc i.r{background:var(--pri3)}
+.ccc i:first-of-type{border-radius:4px 4px 0 0}
+.ccc i+i{margin-top:2px}
+.ccv{position:absolute;left:0;right:0;text-align:center;font-size:11px;color:var(--mut);white-space:nowrap;overflow:hidden}
+.ccl{display:flex;gap:6px;font-size:11px;color:var(--mut);margin-top:4px}.ccl span{flex:1;text-align:center;min-width:0}
+.lg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin:6px 0}.lg b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-left:4px}
+@media print{#print *{-webkit-print-color-adjust:exact;print-color-adjust:exact}#print button,#print select,#print .noprint{display:none!important}#print .card{border:1px solid #999;break-inside:avoid}#print .tile{border:1px solid #999}}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:10px 0 24px}
+@media (max-width:600px){main{padding:10px}.card{padding:12px}th,td{padding:6px 4px;font-size:13px}.tld{width:46px;font-size:11px}}
+@media print{
+ @page{size:A4 landscape;margin:12mm}
+ body{background:#fff;color:#000}
+ body>*:not(#print){display:none!important}
+ #print{display:block;font-size:13px}
+ #print h1{text-align:center;font-size:22px;margin:0 0 10px}
+ #print table{border:2px solid #000}
+ #print th,#print td{border:1px solid #000;padding:5px;color:#000;background:#fff}
+ #print th{background:#ddd!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .pfoot{display:flex;justify-content:space-between;margin-top:14px;gap:20px}
+ .pfoot div{border:1px solid #000;padding:6px 10px}
+}
+</style>
+</head>
+<body>
+<header>
+ <h1>قاعدة بيانات الفلج والطويان</h1>
+ <div class="sub" id="sub"></div>
+ <nav id="nav"></nav>
+</header>
+<main id="main"></main>
+<footer>يعمل بدون إنترنت — البيانات محفوظة في ذاكرة الجهاز، واحفظ نسخة احتياطية بين حين وآخر</footer>
+<div id="ov" onclick="if(event.target===this)closeModal()"><div id="md"></div></div>
+<div id="toast"></div>
+<div id="print"></div>
+<datalist id="dl_names"></datalist>
+
+<script>
+const DAYS=['السبت','الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+const WEEK=10080, FULL=336, KEY='falaj_db_v1';
+const TYPES=['بيع','إرث','هبة','تنازل','صلح','رهن','أخرى'];
+const PAL=['#1f6fb2','#2c8a3a','#c0392b','#7d4fb0','#8a5a3c','#c2457f','#11869a','#8c8a12','#d4700f','#3d5a99','#5e8a26','#a8462f','#0e7d6f','#6b4f8f'];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let _c=0;const uid=()=>Date.now().toString(36)+(_c++).toString(36)+Math.random().toString(36).slice(2,5);
+const num=x=>Math.round((+x||0)*100)/100;
+const fmtN=x=>String(num(x));
+const today=()=>new Date().toISOString().slice(0,10);
+
+/* ===== البيانات الأصلية (من ملف عرضت فلج الجل.xls + العروض) ===== */
+function seed(){
+ const mk=(id,name,kind)=>({id,name,kind,startDay:0,startTime:'07:30',notes:'',holders:[],original:[]});
+ return {v:1,settings:{village:'ضبعة',writer:''},sources:[mk('falaj','فلج الجل','فلج'),mk('bilad','طوي البلاد','طوي'),mk('majnab','طوي المجناب','طوي')],log:[]};
+}
+const MOBILE=true;
+function load(){try{const s=localStorage.getItem(KEY);return s?JSON.parse(s):null}catch(e){return null}}
+/* التخزين: ذاكرة الجهاز (IndexedDB — مساحة كبيرة ودائمة) + على الكمبيوتر: ملف على القرص يُحدَّث تلقائياً بعد كل تعديل */
+const IDB={db:null,
+ open(){return new Promise((res,rej)=>{const r=indexedDB.open('falaj_db',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(this.db=r.result);r.onerror=()=>rej(r.error)})},
+ get(k){return new Promise((res,rej)=>{const r=this.db.transaction('kv').objectStore('kv').get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+ set(k,v){return new Promise((res,rej)=>{const t=this.db.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}};
+let useIDB=false,fileH=null,filePerm=false,fileErr='',_chain=Promise.resolve(),_pending=false;
+const canFile=()=>!MOBILE&&'showSaveFilePicker' in window;
+function persist(){if(_pending)return;_pending=true;_chain=_chain.then(()=>{_pending=false;return flush()})}
+function save(){DB.updated=Date.now();persist()}
+async function flush(){
+ try{if(useIDB)await IDB.set('db',DB);else localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast('تعذّر الحفظ في ذاكرة الجهاز — احفظ نسخة احتياطية')}
+ if(fileH&&filePerm){try{const w=await fileH.createWritable();await w.write(JSON.stringify(DB));await w.close();fileErr=''}catch(e){fileErr=e.message;filePerm=false;render()}}
+}
+async function pickFile(){
+ try{const h=await window.showSaveFilePicker({suggestedName:'بيانات الفلج والطويان.json',types:[{description:'ملف بيانات الفلج والطويان',accept:{'application/json':['.json']}}]});
+  fileH=h;filePerm=true;await IDB.set('fileH',h);await flush();render();toast('سيُحفظ تلقائياً في الملف: '+h.name)}
+ catch(e){if(e.name!=='AbortError')alert('تعذّر اختيار الملف: '+e.message)}
+}
+async function regrant(){if(!fileH)return;try{filePerm=(await fileH.requestPermission({mode:'readwrite'}))==='granted'}catch(e){filePerm=false}if(filePerm){await flush();toast('تم — الحفظ التلقائي في الملف يعمل')}render()}
+async function unlinkFile(){if(!confirm('إيقاف الحفظ التلقائي في الملف؟ (تبقى البيانات في ذاكرة الجهاز)'))return;fileH=null;filePerm=false;await IDB.set('fileH',null);render()}
+function fileBanner(){return canFile()&&fileH&&!filePerm?`<div class="alert warn">الحفظ التلقائي في ملف الجهاز «${esc(fileH.name)}» متوقف حتى تسمح له. <button class="ic" onclick="regrant()">متابعة الحفظ في الملف</button></div>`:''}
+const isEmpty=()=>DB.sources.every(s=>!s.holders.length);
+const fmtDate=t=>t?new Date(t).toLocaleString('ar-OM',{dateStyle:'medium',timeStyle:'short'}):'غير معروف';
+let DB=null; // يُحمَّل في boot()
+function migrate(){DB.log=DB.log||[];DB.maint=DB.maint||[];DB.fund=DB.fund||[];DB.rahn=DB.rahn||[];DB.sales=DB.sales||[];DB.files=DB.files||{};DB.jams=DB.jams||[]}
+const state={tab:'home',src:'falaj',q:''};
+const getS=id=>DB.sources.find(s=>s.id===id);
+
+/* ===== الوقت ===== */
+const tmin=s=>{const[a,b]=String(s||'0:0').split(':').map(Number);return (a||0)*60+(b||0)};
+const total=s=>num(s.holders.reduce((a,h)=>a+(+h.athar||0),0));
+function sched(s){let t=s.startDay*1440+tmin(s.startTime);return s.holders.filter(h=>h.athar>0).map(h=>{const d=h.athar*30,r={h,start:t,end:t+d,dur:d};t+=d;return r})}
+function point(abs){
+ const m=((Math.round(abs)%WEEK)+WEEK)%WEEK,d=Math.floor(m/1440),hm=m%1440,H=Math.floor(hm/60),M=hm%60;
+ let p,dn=DAYS[d];
+ if(H<4){p='ليلة';dn=DAYS[(d+6)%7]}else if(H<6)p='فجر';else if(H<11)p='صباح';else if(H<15)p='ظهر';else if(H<18)p='عصر';else if(H<21)p='مساء';else p='ليلة';
+ return `${p} ${dn} الساعة ${H%12||12}${M?':'+String(M).padStart(2,'0'):''}`;
+}
+const span=r=>`يبدأ ${point(r.start)} وينتهي ${point(r.end)}`;
+function hrs(h){return h===1?'ساعة':h===2?'ساعتان':h<=10?h+' ساعات':h+' ساعة'}
+function durText(min){
+ min=Math.round(min);const h=Math.floor(min/60),m=min%60;
+ const mp=m===30?'نصف':m===15?'ربع':m+' دقيقة';
+ if(!h)return m===30?'نصف ساعة':m===15?'ربع ساعة':m+' دقيقة';
+ return m?`${hrs(h)} و${mp}`:hrs(h);
+}
+function nowAbs(){const d=new Date();return ((d.getDay()+1)%7)*1440+d.getHours()*60+d.getMinutes()+d.getSeconds()/60}
+function current(s){
+ const S=sched(s),n=nowAbs();
+ for(let i=0;i<S.length;i++){const r=S[i],into=((n-r.start)%WEEK+WEEK)%WEEK;if(into<r.dur)return{r,next:S[(i+1)%S.length],left:r.dur-into,into}}
+ let best=null,bd=1e9;for(const r of S){const w=((r.start-n)%WEEK+WEEK)%WEEK;if(w<bd){bd=w;best=r}}
+ return{r:null,next:best,left:bd};
+}
+
+/* ===== أدوات ===== */
+function names(){const a=[];DB.sources.forEach(s=>s.holders.forEach(h=>{if(!a.includes(h.name))a.push(h.name)}));return a}
+function aliasOf(n){const a=new Set();DB.sources.forEach(s=>s.holders.forEach(h=>{if(h.name===n&&h.alias)a.add(h.alias)}));return [...a].join('، ')}
+function col(h){if(h.unowned)return'#8d989f';const i=names().indexOf(h.name);return PAL[(i<0?0:i)%PAL.length]}
+const short=n=>n.replace(/ المقبالي| الخاطري/g,'').split(' ').slice(0,4).join(' ');
+function statusBadge(s){const t=total(s);return t===FULL?`<span class="badge b-ok">${fmtN(t)} أثر — أسبوع كامل</span>`:`<span class="badge b-bad">${fmtN(t)} أثر — ${t<FULL?'ناقص':'زائد'} ${fmtN(Math.abs(FULL-t))}</span>`}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2600)}
+function modal(h){$('#md').innerHTML=h;$('#ov').classList.add('on')}
+function closeModal(){$('#ov').classList.remove('on')}
+function download(data,name,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function activeRahn(sid,name){return DB.log.filter(e=>e.type==='رهن'&&e.active&&e.sources.includes(sid)&&e.from===name)}
+
+/* ===== العرض ===== */
+const TABS=[['home','الرئيسية'],['src','العرضة والجدول'],['own','الملّاك'],['mt','الصيانة'],['el','الكهرباء'],['fd','مبالغ الأموال'],['un','الأثار غير المملوكة'],['rep','الإحصائيات والتقارير'],['tr','نقل الملكية والسجل'],['set','الإعدادات والنسخ']];
+function render(){
+ ensureJams();ensureRahn();
+ $('#sub').textContent='بلدة '+DB.settings.village+' — فلج الجل · طوي البلاد · طوي المجناب';
+ $('#nav').innerHTML=TABS.map(([k,v])=>`<button class="${state.tab===k?'on':''}" onclick="go('${k}')">${v}</button>`).join('');
+ $('#dl_names').innerHTML=names().map(n=>`<option value="${esc(n)}">`).join('');
+ $('#main').innerHTML=fileBanner()+({home:vHome,src:vSrc,own:vOwn,mt:vMt,el:vElec,fd:vFund,un:vUn,rep:vRep,tr:vTr,set:vSet})[state.tab]();
+}
+function go(t,src){if(t!==state.tab){state.mt=null;state.jp=null}state.tab=t;if(src)state.src=src;render();scrollTo(0,0)}
+
+function warnings(s){
+ const t=total(s);if(t===FULL)return'';
+ return `<div class="alert bad">مجموع أثار ${esc(s.name)} = ${fmtN(t)} أثر، والأسبوع الكامل = ${FULL} أثر (168 ساعة). ${t<FULL?`يبقى ${durText((FULL-t)*30)} في الأسبوع بدون صاحب`:`الدور يزيد على الأسبوع بـ ${durText((t-FULL)*30)}`} — راجع الأثار.</div>`;
+}
+
+function vHome(){
+ if(isEmpty())return `<div class="card"><h2>مرحباً</h2><p>لا توجد بيانات بعد على هذا الجهاز.</p>
+ <ol class="small"><li>على الكمبيوتر: افتح البرنامج ← الإعدادات والنسخ ← <b>إرسال البيانات</b></li><li>أرسل الملف لنفسك (واتساب أو Google Drive)</li><li>هنا: اضغط <b>استلام البيانات</b> واختر الملف — أو من واتساب: مشاركة الملف ← اختر «الفلج والطويان»</li></ol>
+ <div class="row"><button class="pri" onclick="$('#imp').click()">استلام البيانات</button></div><input id="imp" type="file" accept=".json,application/json,text/plain,*/*" style="display:none" onchange="restore(this.files[0])"></div>`;
+ let h='<div class="grid">';
+ DB.sources.forEach(s=>{
+  const c=current(s);
+  h+=`<div class="card"><div class="row" style="justify-content:space-between;margin:0"><h2 style="margin:0">${esc(s.name)}</h2>${statusBadge(s)}</div>`;
+  if(c.r){const p=c.into/c.r.dur*100;
+   h+=`<div class="mut small" style="margin-top:10px">الماء الآن عند</div><div class="big"><span class="dot" style="background:${col(c.r.h)}"></span>${esc(c.r.h.name)}</div>
+   <div class="small mut">${fmtN(c.r.h.athar)} أثر · ${esc(span(c.r))}</div>${c.r.h.unowned&&rahnActive(s.id).length?`<div class="small">مرهون منها: ${rahnActive(s.id).map(m=>`${fmtN(m.athar)} أثر لـ${esc(curP(m).to)}`).join('، ')}</div>`:''}
+   <div class="bar"><i style="width:${p.toFixed(1)}%"></i></div><div class="small">متبقٍ: <b>${durText(c.left)}</b></div>`;
+  }else h+=`<div class="alert warn">لا يوجد صاحب دور في هذا الوقت</div>`;
+  if(c.next)h+=`<div class="small" style="margin-top:8px">بعده: <b>${esc(c.next.h.name)}</b> — ${esc(point(c.next.start))}</div>`;
+  h+=`<div class="row"><button onclick="go('src','${s.id}')">عرض الجدول</button></div></div>`;
+ });
+ h+='</div>';
+ DB.sources.forEach(s=>h+=warnings(s));
+ const due=dues(),dt=r3(due.reduce((a,x)=>a+x[1],0));
+ if(dt>0)h+=`<div class="card"><div class="row" style="justify-content:space-between;margin:0"><h3 style="margin:0">المستحقات غير المسددة (صيانة، كهرباء، جمعيات)</h3><span class="badge b-warn">${money(dt)} ر.ع على ${due.length} مالك</span></div><div class="row"><button onclick="go('mt')">الصيانة</button><button onclick="go('el')">الكهرباء</button><button onclick="go('fd')">الجمعيات</button></div></div>`;
+ if(allFund().length)h+=`<div class="card"><h3>رصيد مبالغ الأموال</h3><div class="units">${DB.sources.map(s=>`<span>${esc(s.name)}: <b style="color:${fundBal(s.id)<0?'var(--bad)':'inherit'}">${money(fundBal(s.id))}</b> ر.ع</span>`).join('')}</div><div class="row"><button onclick="go('fd')">عرض الأموال</button></div></div>`;
+ const ex=DB.rahn.filter(expired);
+ if(ex.length)h+=`<div class="alert warn"><b>رهون انتهت مدتها وتحتاج تجديداً أو فكاً:</b> ${ex.map(m=>`${esc(getS(m.src).name)} — ${fmtN(m.athar)} أثر لـ${esc(curP(m).to)} (انتهت ${esc(curP(m).end)})`).join('، ')} <button class="ic" onclick="go('un')">فتح</button></div>`;
+ const rahn=DB.log.filter(e=>e.type==='رهن'&&e.active);
+ if(rahn.length)h+=`<div class="card"><h3>رهون قائمة (${rahn.length})</h3>${rahn.map(e=>`<div class="small">• ${esc(e.from)} ← ${esc(e.to)}: ${fmtN(e.athar)} أثر في ${e.sources.map(id=>esc(getS(id).name)).join('، ')}</div>`).join('')}</div>`;
+ h+=`<div class="card"><h3>المقاييس</h3><div class="units"><span><b>أثر الماء</b> = نصف ساعة</span><span><b>نصف أثر</b> = ربع ساعة</span><span><b>البادة</b> = 24 أثر</span><span><b>البادة المغلقة</b> = 48 أثر</span><span><b>الدورة</b> = ${FULL} أثر = أسبوع (168 ساعة)</span></div></div>`;
+ return h;
+}
+
+function vSrc(){
+ const s=getS(state.src),S=sched(s),c=current(s);
+ let h=`<div class="chips">${DB.sources.map(x=>`<button class="${x.id===s.id?'on':''}" onclick="state.src='${x.id}';render()">${esc(x.name)}</button>`).join('')}</div>`;
+ h+=`<div class="card"><div class="row" style="justify-content:space-between;margin-top:0"><h2 style="margin:0">عرضة ${esc(s.name)} ببلدة ${esc(DB.settings.village)}</h2>${statusBadge(s)}</div>
+ <div class="small mut">يبدأ الدور ${esc(point(s.startDay*1440+tmin(s.startTime)))} ويتكرر كل أسبوع — يمكن تغييره من الإعدادات</div>
+ <div class="row"><button class="pri" onclick="editHolder('${s.id}')">+ إضافة مالك</button><button onclick="printSrc('${s.id}')">🖨 طباعة العرضة</button><button onclick="shareSrc('${s.id}')">نسخ / إرسال واتساب</button></div>
+ ${warnings(s)}
+ <div class="tw"><table><thead><tr><th>ت</th><th>الاسم</th><th>الأثار</th><th>الساعات</th><th>الوقت</th><th>ملاحظات</th><th></th></tr></thead><tbody>`;
+ let i=0;
+ s.holders.forEach((x,k)=>{
+  const r=S.find(r=>r.h===x),now=c.r&&c.r.h===x;
+  const rn=[...activeRahn(s.id,x.name).map(e=>`مرهون ${fmtN(e.athar)} أثر لـ${esc(e.to)}`),...(x.unowned?rahnActive(s.id).map(m=>`مرهون ${fmtN(m.athar)} أثر لـ${esc(curP(m).to)}${curP(m).end?' حتى '+esc(curP(m).end):''}`):[])].join('، ');
+  h+=`<tr class="${now?'now':''} ${x.athar>0?'':'zero'}"><td class="n">${x.athar>0?++i:'-'}</td>
+  <td><span class="dot" style="background:${col(x)}"></span>${esc(x.name)}${x.alias?`<div class="small mut">${esc(x.alias)}</div>`:''}${now?' <span class="badge b-ok">الآن</span>':''}</td>
+  <td class="n">${fmtN(x.athar)}</td><td class="n">${r?durText(r.dur):'-'}</td><td class="small">${r?esc(span(r)):'—'}</td>
+  <td class="small">${esc(x.note)}${rn?`<div style="color:var(--warn)">${rn}</div>`:''}</td>
+  <td class="n"><button class="ic" title="أعلى" onclick="mv('${s.id}',${k},-1)">▲</button><button class="ic" title="أسفل" onclick="mv('${s.id}',${k},1)">▼</button><button class="ic" title="تعديل" onclick="editHolder('${s.id}','${x.id}')">✎</button></td></tr>`;
+ });
+ h+=`</tbody><tfoot><tr><td></td><td>المجموع</td><td class="n">${fmtN(total(s))}</td><td class="n">${durText(total(s)*30)}</td><td colspan="3"></td></tr></tfoot></table></div></div>`;
+ h+=`<div class="card"><h3>الأسبوع على شكل خط زمني</h3><div class="small mut">الخط الأحمر = الوقت الحالي · مرّر على أي جزء لمعرفة صاحبه</div>${timeline(s)}</div>`;
+ const ot=s.original.reduce((a,o)=>a+o.a,0);
+ const nu=s.original.filter(o=>o.u).length;
+ h+=`<div class="card"><details ${state.origOpen?'open':''} ontoggle="state.origOpen=this.open"><summary>العرضة الأصلية (${s.original.length} اسماً — ${fmtN(ot)} أثر${nu?` — ${nu} محدّث`:''})</summary>
+ <div class="small mut" style="margin:6px 0">الأصل كما ورد في الكشف المطبوع ولا يتغيّر. لتحديث الأسماء اضغط ✎ — يُحفظ التحديث بجانب الأصل.</div>
+ <div class="tw"><table><thead><tr><th>ت</th><th>الاسم في الأصل</th><th>الأثار</th><th>من ورثه أو يدير الماء (الأصل)</th><th>التحديث</th><th></th></tr></thead><tbody>
+ ${s.original.map((o,k)=>`<tr><td class="n">${k+1}</td><td>${esc(o.n)}</td><td class="n">${fmtN(o.a)}</td><td class="small">${esc(o.h)}</td>
+ <td class="small">${o.u?`${o.u.n?`<b>${esc(o.u.n)}</b>`:''}${o.u.h?`<div>${esc(o.u.h)}</div>`:''}<div class="mut">حُدّث ${esc(o.u.d||'')}${o.u.note?' — '+esc(o.u.note):''}${(o.hist||[]).length?` · ${o.hist.length} تحديث سابق`:''}</div>`:'<span class="mut">—</span>'}</td>
+ <td class="n"><button class="ic" title="تحديث" onclick="editOrig('${s.id}',${k})">✎</button></td></tr>`).join('')}
+ </tbody><tfoot><tr><td></td><td>المجموع</td><td class="n">${fmtN(ot)}</td><td colspan="3"></td></tr></tfoot></table></div></details></div>`;
+ h+=`<div class="card"><h3>ملاحظات ${esc(s.name)}</h3><textarea onchange="getS('${s.id}').notes=this.value;save();toast('تم الحفظ')">${esc(s.notes)}</textarea></div>`;
+ return h;
+}
+
+/* تحديث أسماء العرضة الأصلية: الأصل (n, h) ثابت لا يُعدَّل، والتحديث في o.u وما سبقه في o.hist */
+function editOrig(sid,k){
+ const s=getS(sid),o=s.original[k],u=o.u||{};
+ modal(`<h3>تحديث سطر في العرضة الأصلية — ${esc(s.name)}</h3>
+ <div class="alert info small"><b>الأصل (لا يتغيّر):</b><br>${esc(o.n)} — ${fmtN(o.a)} أثر<br>${esc(o.h)||'—'}</div>
+ <label>الاسم المحدّث<input id="o_n" list="dl_names" value="${esc(u.n||'')}" placeholder="مثال: ورثة ${esc(o.n)}"></label>
+ <label>من ورثه أو يدير الماء الآن<textarea id="o_h">${esc(u.h||'')}</textarea></label>
+ <div class="f2"><label>تاريخ التحديث<input id="o_d" type="date" value="${esc(u.d||today())}"></label><label>ملاحظة / المرجع<input id="o_note" value="${esc(u.note||'')}"></label></div>
+ <label class="chk"><input id="o_all" type="checkbox" checked> تطبيق الاسم المحدّث على نفس السطر في ${DB.sources.filter(x=>x.id!==sid).map(x=>esc(x.name)).join(' و')}</label>
+ ${(o.hist||[]).length?`<details><summary class="small">التحديثات السابقة (${o.hist.length})</summary>${o.hist.map(x=>`<div class="small">• ${esc(x.d||'')}: ${esc(x.n||'')}${x.h?' — '+esc(x.h):''}${x.note?' ('+esc(x.note)+')':''}</div>`).join('')}</details>`:''}
+ <div class="row"><button class="pri" onclick="saveOrig('${sid}',${k})">حفظ التحديث</button>${o.u?`<button class="bad" onclick="clearOrig('${sid}',${k})">حذف التحديث</button>`:''}<button onclick="closeModal()">إلغاء</button></div>`);
+}
+function setOrig(o,u){if(o.u&&JSON.stringify(o.u)!==JSON.stringify(u))(o.hist=o.hist||[]).push(o.u);o.u=u}
+function saveOrig(sid,k){
+ const s=getS(sid),o=s.original[k],n=$('#o_n').value.trim(),hh=$('#o_h').value.trim(),d=$('#o_d').value,note=$('#o_note').value.trim();
+ if(!n&&!hh)return alert('اكتب الاسم المحدّث أو من يدير الماء الآن');
+ setOrig(o,{n,h:hh,d,note});
+ if(n&&$('#o_all').checked)DB.sources.forEach(x=>{if(x.id===sid)return;const p=x.original[k];if(p&&p.n===o.n)setOrig(p,{...(p.u||{}),n,d,note:p.u&&p.u.note||note})});
+ save();closeModal();render();toast('تم حفظ التحديث — الأصل كما هو');
+}
+function clearOrig(sid,k){const o=getS(sid).original[k];if(!confirm('حذف التحديث والرجوع لعرض الأصل فقط؟ (يبقى في التحديثات السابقة)'))return;(o.hist=o.hist||[]).push(o.u);delete o.u;save();closeModal();render()}
+
+function timeline(s){
+ const S=sched(s),n=nowAbs();let h='<div class="tl">';
+ for(let d=0;d<7;d++){
+  const a=d*1440,b=a+1440;let segs='';
+  S.forEach(r=>{for(const k of[-WEEK,0,WEEK]){const s0=Math.max(r.start+k,a),e0=Math.min(r.end+k,b);
+   if(e0>s0){const w=(e0-s0)/1440*100;segs+=`<div class="seg" style="right:${((s0-a)/1440*100).toFixed(3)}%;width:${w.toFixed(3)}%;background:${col(r.h)}" title="${esc(r.h.name)} — ${esc(span(r))}">${w>8?esc(short(r.h.name)):''}</div>`}}});
+  const nm=(n>=a&&n<b)?`<div class="nowl" style="right:${((n-a)/1440*100).toFixed(2)}%"></div>`:'';
+  h+=`<div class="tlr"><div class="tld">${DAYS[d]}</div><div class="tlb">${segs}${nm}</div></div>`;
+ }
+ h+=`<div class="tlr"><div class="tld"></div><div class="tlx">${[0,6,12,18,24].map(x=>`<span style="right:${x/24*100}%">${x%12||12}${x===12?'ظ':x<12||x===24?'ص':'م'}</span>`).join('')}</div></div></div>`;
+ return h;
+}
+
+function vOwn(){
+ const q=state.q.trim();
+ const N=names().filter(n=>!q||n.includes(q)||aliasOf(n).includes(q));
+ let h=`<div class="card"><h2>الملّاك في الفلج والطويان</h2><input placeholder="بحث بالاسم…" value="${esc(state.q)}" oninput="state.q=this.value;const p=this.selectionStart;render();const i=$('#main input');i.focus();i.setSelectionRange(p,p)">
+ <div class="tw" style="margin-top:10px"><table><thead><tr><th>الاسم</th>${DB.sources.map(s=>`<th>${esc(s.name)}</th>`).join('')}<th>المجموع</th></tr></thead><tbody>`;
+ N.forEach(n=>{let t=0;
+  h+=`<tr class="click" onclick="person(${esc(JSON.stringify(n))})"><td>${esc(n)}${aliasOf(n)?`<div class="small mut">${esc(aliasOf(n))}</div>`:''}</td>`+DB.sources.map(s=>{const x=s.holders.find(h=>h.name===n);const a=x?+x.athar:0;t+=a;return `<td class="n">${a?`${fmtN(a)} أثر<div class="small mut">${durText(a*30)}</div>`:'—'}</td>`}).join('')+`<td class="n"><b>${fmtN(t)}</b></td></tr>`;
+ });
+ h+=`</tbody></table></div><div class="small mut">اضغط على أي اسم لعرض أوقاته في كل المصادر.</div></div>`;
+ return h;
+}
+function person(n){
+ let h=`<h3>${esc(n)}</h3>${aliasOf(n)?`<div class="small mut">${esc(aliasOf(n))}</div>`:''}`;
+ DB.sources.forEach(s=>{const r=sched(s).find(r=>r.h.name===n);
+  h+=`<div class="card" style="margin:10px 0"><b>${esc(s.name)}</b>: ${r?`${fmtN(r.h.athar)} أثر — ${durText(r.dur)}<div class="small">${esc(span(r))}</div>${r.h.note?`<div class="small mut">${esc(r.h.note)}</div>`:''}`:'<span class="mut">لا يملك</span>'}</div>`});
+ const RH=rahnActive().filter(m=>curP(m).to===n);
+ if(RH.length)h+=`<b>أثار مرهونة عنده</b>${RH.map(m=>`<div class="small">• ${esc(getS(m.src).name)}: ${fmtN(m.athar)} أثر غير مملوكة${curP(m).end?' حتى '+esc(curP(m).end):''} — يتحمّل مطالبها المالية</div>`).join('')}`;
+ const M=[];DB.maint.forEach(j=>j.shares.forEach(x=>{if(x.name===n)M.push([j,x])}));
+ if(M.length)h+=`<b>المبالغ المطلوبة (صيانة، كهرباء، جمعيات)</b>${M.map(([j,x])=>{const rem=r3(x.amt-shPaid(x));return `<div class="small">• ${isElec(j)?'':esc(j.date)+' — '}${isJam(j)?'جمعية — ':''}${esc(getS(j.src)?.name||'')}: ${esc(j.title)} — الحصة ${money(x.amt)} ر.ع ${rem>0?`<span style="color:var(--bad)">متبقي ${money(rem)}</span>`:'<span style="color:var(--ok)">مسددة</span>'}</div>`}).join('')}`;
+ const L=DB.log.filter(e=>e.from===n||e.to===n);
+ if(L.length)h+=`<b>العمليات</b>${L.map(e=>`<div class="small">• ${esc(e.date)} — ${esc(e.type)}: ${esc(e.from)} ← ${esc(e.to)} (${fmtN(e.athar)} أثر)</div>`).join('')}`;
+ modal(h+`<div class="row"><button class="pri" onclick="closeModal();printOwner(${esc(JSON.stringify(n))})">🖨 كشف حساب المالك</button><button onclick="closeModal()">إغلاق</button></div>`);
+}
+
+function vTr(){
+ let h=`<div class="card"><h2>تسجيل نقل ملكية (بيع، إرث، هبة، رهن…)</h2>
+ <div class="small mut">تُنقل الأثار تلقائياً من المالك إلى المالك الجديد ويُعاد حساب الأوقات. إذا كان المالك الجديد غير موجود يُضاف بعد المالك القديم مباشرة في الدور. الرهن يُسجَّل فقط ولا يغيّر الملكية.</div>
+ <label>في</label><div class="row" style="margin-top:0">${DB.sources.map(s=>`<label class="chk"><input type="checkbox" class="t_src" value="${s.id}" ${s.id===state.src?'checked':''}> ${esc(s.name)}</label>`).join('')}</div>
+ <div class="f2"><label>من (المالك الحالي)<input id="t_from" list="dl_names"></label><label>إلى (المالك الجديد)<input id="t_to" list="dl_names"></label>
+ <label>عدد الأثار<input id="t_a" type="number" step="0.5" min="0"></label><label>نوع العملية<select id="t_type">${TYPES.map(t=>`<option>${t}</option>`).join('')}</select></label>
+ <label>التاريخ<input id="t_date" type="date" value="${today()}"></label><label>ملاحظات / رقم العقد<input id="t_note"></label></div>
+ <div class="row"><button class="pri" onclick="doTransfer()">تسجيل العملية</button></div></div>`;
+ h+=`<div class="card"><h3>سجل العمليات</h3>${DB.log.length?`<div class="tw"><table><thead><tr><th>التاريخ</th><th>النوع</th><th>من</th><th>إلى</th><th>الأثار</th><th>في</th><th>ملاحظات</th><th></th></tr></thead><tbody>
+ ${DB.log.map(e=>`<tr><td class="n">${esc(e.date)}</td><td>${esc(e.type)}${e.type==='رهن'?(e.active?' <span class="badge b-warn">قائم</span>':` <span class="badge b-ok">مفكوك ${esc(e.released||'')}</span>`):''}</td><td>${esc(e.from)}</td><td>${esc(e.to)}</td><td class="n">${fmtN(e.athar)}</td><td class="small">${e.sources.map(id=>esc(getS(id)?.name||id)).join('، ')}</td><td class="small">${esc(e.note)}</td>
+ <td class="n">${e.type==='رهن'&&e.active?`<button class="ic" onclick="release('${e.id}')">فك الرهن</button>`:''}<button class="ic bad" onclick="undo('${e.id}')">تراجع</button></td></tr>`).join('')}
+ </tbody></table></div>`:'<div class="mut">لا توجد عمليات بعد.</div>'}</div>`;
+ return h;
+}
+function doTransfer(){
+ const srcs=[...document.querySelectorAll('.t_src:checked')].map(x=>x.value);
+ const from=$('#t_from').value.trim(),to=$('#t_to').value.trim(),a=num($('#t_a').value),type=$('#t_type').value,date=$('#t_date').value,note=$('#t_note').value.trim();
+ if(!srcs.length)return alert('اختر الفلج أو الطوي');
+ if(!from||!to)return alert('اكتب اسم المالك الحالي والمالك الجديد');
+ if(from===to)return alert('المالك الحالي والجديد نفس الاسم');
+ if(!(a>0))return alert('اكتب عدد الأثار');
+ const errs=[];
+ srcs.forEach(id=>{const s=getS(id),f=s.holders.find(h=>h.name===from);if(!f)errs.push(`${s.name}: لا يوجد مالك باسم «${from}»`);else if(f.athar<a-1e-9)errs.push(`${s.name}: «${from}» يملك ${fmtN(f.athar)} أثر فقط`)});
+ if(errs.length)return alert(errs.join('\n'));
+ const e={id:uid(),date,type,from,to,athar:a,sources:srcs,note,created:{},at:Date.now()};
+ if(type==='رهن')e.active=true;
+ else srcs.forEach(id=>{const s=getS(id),i=s.holders.findIndex(h=>h.name===from),f=s.holders[i];f.athar=num(f.athar-a);
+  let t=s.holders.find(h=>h.name===to);
+  if(!t){t={id:uid(),name:to,alias:'',athar:0,note:'',unowned:to==='أثار غير مملوكة'};s.holders.splice(i+1,0,t);e.created[id]=t.id}
+  t.athar=num(t.athar+a)});
+ DB.log.unshift(e);save();render();toast('تم تسجيل العملية');
+}
+function release(id){const e=DB.log.find(x=>x.id===id);if(!e||!confirm('تأكيد فك الرهن؟'))return;e.active=false;e.released=today();save();render()}
+function undo(id){
+ const se=DB.log.find(x=>x.id===id);if(se&&se.sale)return alert('هذه العملية بيع أثار غير مملوكة — ألغها من تبويب «الأثار غير المملوكة» حتى يُلغى المبلغ والعقد معها.');
+ const e=DB.log.find(x=>x.id===id);if(!e||!confirm('التراجع عن هذه العملية وحذفها من السجل؟'))return;
+ if(e.type!=='رهن'){
+  const errs=[];e.sources.forEach(sid=>{const s=getS(sid),t=s&&s.holders.find(h=>h.name===e.to);if(!t||t.athar<e.athar-1e-9)errs.push(`${s?s.name:sid}: «${e.to}» لم يعد يملك ${fmtN(e.athar)} أثر`)});
+  if(errs.length)return alert('لا يمكن التراجع:\n'+errs.join('\n'));
+  e.sources.forEach(sid=>{const s=getS(sid),t=s.holders.find(h=>h.name===e.to);t.athar=num(t.athar-e.athar);
+   let f=s.holders.find(h=>h.name===e.from);if(!f){f={id:uid(),name:e.from,alias:'',athar:0,note:'',unowned:false};s.holders.splice(s.holders.indexOf(t),0,f)}
+   f.athar=num(f.athar+e.athar);
+   if(e.created[sid]===t.id&&t.athar<=0)s.holders.splice(s.holders.indexOf(t),1)});
+ }
+ DB.log=DB.log.filter(x=>x!==e);save();render();toast('تم التراجع');
+}
+
+/* ===== الصيانة: المبلغ يُقسم على الملّاك حسب الأثار ===== */
+const r3=x=>Math.round((+x||0)*1000)/1000;
+const money=x=>r3(x).toFixed(3);
+const shPaid=x=>r3((x.pays||[]).reduce((a,p)=>a+p.a,0));
+const jobPaid=j=>r3(j.shares.reduce((a,x)=>a+shPaid(x),0));
+const jobAthar=j=>num(j.shares.reduce((a,x)=>a+x.athar,0))||1;
+function divide(amount,list){ // list: [{name,athar,pays?}] — الحصة = المبلغ × الأثار ÷ المجموع، وفرق التقريب على أكبر حصة
+ const T=list.reduce((a,x)=>a+x.athar,0);if(!T)return list;
+ list.forEach(x=>x.amt=r3(amount*x.athar/T));
+ const diff=r3(amount-list.reduce((a,x)=>a+x.amt,0));
+ if(diff){const big=list.reduce((a,b)=>b.athar>a.athar?b:a);big.amt=r3(big.amt+diff)}
+ return list;
+}
+function holdersFor(s,incl){ // من يتحمّل المطالب: الملّاك + المرتهنون عن الأثار غير المملوكة المرهونة (+ الباقي غير المملوك إن طُلب)
+ const L=s.holders.filter(h=>h.athar>0&&!h.unowned).map(h=>({name:h.name,athar:+h.athar,amt:0,pays:[]}));
+ rahnActive(s.id).forEach(m=>{const to=curP(m).to;let x=L.find(y=>y.name===to);if(!x){x={name:to,athar:0,amt:0,pays:[]};L.push(x)}x.athar=num(x.athar+m.athar);x.rahn=num((x.rahn||0)+m.athar)});
+ const free=freeOf(s);if(incl&&free>0)L.push({name:'أثار غير مملوكة',athar:free,amt:0,pays:[]});
+ return L;
+}
+function dues(){const m=new Map();DB.maint.forEach(j=>j.shares.forEach(x=>{const r=r3(x.amt-shPaid(x));if(r>0)m.set(x.name,r3((m.get(x.name)||0)+r))}));return [...m].sort((a,b)=>b[1]-a[1])}
+function mtPrev(){
+ const s=getS($('#m_src').value),f=$('#m_f')?+$('#m_f').value||0:0,a=+$('#m_a').value-f,L=holdersFor(s,$('#m_u').checked),T=num(L.reduce((x,h)=>x+h.athar,0));
+ if($('#m_fb'))$('#m_fb').textContent=`رصيد أموال ${s.name}: ${money(fundBal(s.id))} ر.ع`;
+ $('#m_prev').innerHTML=T?`يُقسم على ${L.length} مالك — ${fmtN(T)} أثر${a>0?` — ${f>0?`على الملّاك ${money(a)} ر.ع — `:''}<b>سعر الأثر = ${money(a/T)} ر.ع</b>`:''}`:'لا يوجد ملّاك في هذا المصدر';
+}
+function vMt(){
+ const j=state.mt&&DB.maint.find(x=>x.id===state.mt);
+ if(j)return vMtJob(j);
+ let h=`<div class="card"><h2>إضافة صيانة</h2><div class="small mut">يُقسم المبلغ على الملّاك حسب عدد الأثار: حصة المالك = المبلغ × أثاره ÷ مجموع الأثار.</div>
+ <div class="f2"><label>الفلج / الطوي<select id="m_src" onchange="mtPrev()">${DB.sources.map(s=>`<option value="${s.id}" ${s.id===state.src?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
+ <label>البيان<input id="m_t" placeholder="مثال: تنظيف الساقية، إصلاح المضخة"></label>
+ <label>التكلفة الكلية (ر.ع)<input id="m_a" type="number" step="0.001" min="0" oninput="mtPrev()"></label>
+ <label>التاريخ<input id="m_d" type="date" value="${today()}"></label>
+ <label>يُدفع من رصيد الأموال (ر.ع) — اختياري<input id="m_f" type="number" step="0.001" min="0" oninput="mtPrev()"><span id="m_fb" class="small mut"></span></label>
+ <label>ملاحظات<input id="m_n"></label></div>
+ <label class="chk"><input id="m_u" type="checkbox" onchange="mtPrev()"> تُحسب حصة على الأثار غير المملوكة أيضاً</label>
+ <div id="m_prev" class="small" style="margin:6px 0"></div>
+ <div class="row"><button class="pri" onclick="addMt()">حفظ وتوزيع المبلغ</button></div></div>`;
+ const MJ=DB.maint.filter(j=>!j.kind);
+ h+=`<div class="card"><h3>أعمال الصيانة</h3>${MJ.length?`<div class="tw"><table><thead><tr><th>التاريخ</th><th>المصدر</th><th>البيان</th><th>المبلغ</th><th>سعر الأثر</th><th>المحصّل</th><th>المتبقي</th></tr></thead><tbody>
+ ${MJ.map(j=>{const p=jobPaid(j),r=r3(j.amount-p);return `<tr class="click" onclick="state.mt='${j.id}';render();scrollTo(0,0)"><td class="n">${esc(j.date)}</td><td>${esc(getS(j.src)?.name||'')}</td><td>${esc(j.title)}</td><td class="n">${money(j.amount)}</td><td class="n">${money(j.amount/jobAthar(j))}</td><td class="n">${money(p)}</td><td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مكتمل</span>'}</td></tr>`}).join('')}
+ </tbody></table></div><div class="small mut">اضغط على أي صيانة لعرض التوزيع وتسجيل التسديد.</div>`:'<div class="mut">لا توجد صيانة مسجلة بعد.</div>'}</div>`;
+ const D=dues();
+ if(D.length)h+=`<div class="card"><h3>المتبقي على الملّاك (صيانة، كهرباء، جمعيات)</h3><div class="tw"><table><thead><tr><th>المالك</th><th>المتبقي (ر.ع)</th></tr></thead><tbody>
+ ${D.map(([n,v])=>`<tr class="click" onclick="person(${esc(JSON.stringify(n))})"><td>${esc(n)}</td><td class="n">${money(v)}</td></tr>`).join('')}</tbody>
+ <tfoot><tr><td>المجموع</td><td class="n">${money(D.reduce((a,x)=>a+x[1],0))}</td></tr></tfoot></table></div></div>`;
+ setTimeout(()=>$('#m_src')&&mtPrev());
+ return h;
+}
+function addMt(){
+ const s=getS($('#m_src').value),t=$('#m_t').value.trim(),c=r3($('#m_a').value),f=r3($('#m_f').value),incl=$('#m_u').checked;
+ if(!t)return alert('اكتب بيان الصيانة');
+ if(!(c>0))return alert('اكتب المبلغ');
+ if(f<0||f>c)return alert('المبلغ من رصيد الأموال يجب أن يكون بين صفر والتكلفة الكلية');
+ if(f>fundBal(s.id)+1e-9&&!confirm(`رصيد أموال ${s.name} ${money(fundBal(s.id))} ر.ع فقط، وسيصبح سالباً. متابعة؟`))return;
+ const L=holdersFor(s,incl);if(!L.length)return alert('لا يوجد ملّاك في '+s.name);
+ const a=r3(c-f),date=$('#m_d').value;
+ const j={id:uid(),src:s.id,title:t,amount:a,cost:c,fund:f,date,note:$('#m_n').value.trim(),incl,shares:divide(a,L),at:Date.now()};
+ if(f>0)DB.fund.unshift({id:uid(),src:s.id,dir:'out',type:'صيانة',amount:f,date,party:'',athar:0,note:t,job:j.id,at:Date.now()});
+ DB.maint.unshift(j);state.mt=j.id;save();render();scrollTo(0,0);toast('تم توزيع المبلغ');
+}
+function vMtJob(j){
+ const s=getS(j.src),p=jobPaid(j),T=jobAthar(j);
+ let h=`<div class="row"><button onclick="state.mt=null;render()">→ رجوع ${isElec(j)?'لفواتير الكهرباء':isJam(j)?'':j.kind==='rahn'?'':'لقائمة الصيانة'}</button></div>
+ ${isJam(j)?`<div class="alert info">جمعية لدعم رصيد أموال ${esc(s?s.name:'')} — كل مبلغ يُسدَّد هنا يدخل في الرصيد تلقائياً.</div>`:''}
+ <div class="card"><h2>${esc(j.title)}</h2>
+ <div class="small mut">${esc(s?s.name:'')} · ${isElec(j)?'أُدخلت '+esc(j.date):esc(j.date)}${j.note?' · '+esc(j.note):''}</div>
+ ${j.fund>0?`<div class="alert info">التكلفة الكلية ${money(j.cost)} ر.ع — دُفع منها <b>${money(j.fund)} ر.ع من رصيد الأموال</b> — والباقي ${money(j.amount)} ر.ع على الملّاك.</div>`:''}
+ <div class="units" style="margin:10px 0"><span>${j.fund>0?'على الملّاك':'المبلغ'}: <b>${money(j.amount)} ر.ع</b></span><span>الأثار: <b>${fmtN(T)}</b></span><span>سعر الأثر: <b>${money(j.amount/T)} ر.ع</b></span><span>المحصّل: <b>${money(p)}</b></span><span>المتبقي: <b>${money(j.amount-p)}</b></span></div>
+ <div class="bar"><i style="width:${Math.min(100,p/j.amount*100).toFixed(1)}%"></i></div>
+ <div class="row"><button onclick="printMt('${j.id}')">🖨 طباعة</button><button onclick="shareMt('${j.id}')">نسخ / واتساب</button><button onclick="editMt('${j.id}')">✎ تعديل</button>${j.kind==='rahn'?'':`<button onclick="redoMt('${j.id}')">إعادة التوزيع حسب الملكية الحالية</button>`}<button class="bad" onclick="delMt('${j.id}')">حذف</button></div>
+ <div class="tw"><table><thead><tr><th>ت</th><th>المالك</th><th>الأثار</th><th>الحصة</th><th>المدفوع</th><th>المتبقي</th><th></th></tr></thead><tbody>`;
+ j.shares.forEach((x,i)=>{const pd=shPaid(x),r=r3(x.amt-pd);
+  h+=`<tr><td class="n">${i+1}</td><td>${esc(x.name)}${x.rahn?`<div class="small mut">منها ${fmtN(x.rahn)} أثر مرهونة من الأثار غير المملوكة</div>`:''}${(x.pays||[]).length?`<div class="small mut">${x.pays.map(q=>`${money(q.a)} في ${esc(q.d)}`).join('، ')}</div>`:''}</td><td class="n">${fmtN(x.athar)}</td><td class="n">${money(x.amt)}</td><td class="n">${money(pd)}</td>
+  <td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مسدد</span>'}</td>
+  <td class="n">${r>0?`<button class="ic" onclick="payMt('${j.id}',${i})">تسديد</button>`:''}${pd>0?`<button class="ic bad" onclick="unpayMt('${j.id}',${i})">إلغاء</button>`:''}</td></tr>`});
+ h+=`</tbody><tfoot><tr><td></td><td>المجموع</td><td class="n">${fmtN(T)}</td><td class="n">${money(j.amount)}</td><td class="n">${money(p)}</td><td class="n">${money(j.amount-p)}</td><td></td></tr></tfoot></table></div></div>`;
+ return h;
+}
+const getJ=id=>DB.maint.find(x=>x.id===id);
+function payMt(id,i){
+ const j=getJ(id),x=j.shares[i],r=r3(x.amt-shPaid(x));
+ modal(`<h3>تسديد — ${esc(x.name)}</h3><div class="small mut">${esc(j.title)} · الحصة ${money(x.amt)} · المتبقي ${money(r)} ر.ع</div>
+ <div class="f2"><label>المبلغ المدفوع<input id="p_a" type="number" step="0.001" min="0" value="${money(r)}"></label><label>التاريخ<input id="p_d" type="date" value="${today()}"></label></div>
+ <div class="row"><button class="pri" onclick="savePay('${id}',${i})">حفظ</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+function savePay(id,i){const j=getJ(id),x=j.shares[i],a=r3($('#p_a').value);if(!(a>0))return alert('اكتب المبلغ');
+ if(a>r3(x.amt-shPaid(x))+1e-9&&!confirm('المبلغ أكبر من المتبقي، هل تريد الحفظ؟'))return;
+ (x.pays=x.pays||[]).push({a,d:$('#p_d').value});save();closeModal();render();toast('تم التسديد')}
+function unpayMt(id,i){const x=getJ(id).shares[i];if(!confirm(`إلغاء كل المدفوعات المسجلة لـ«${x.name}» في هذه الصيانة؟`))return;x.pays=[];save();render()}
+function editMt(id){
+ const j=getJ(id);
+ modal(`<h3>تعديل الصيانة</h3><label>البيان<input id="e_t" value="${esc(j.title)}"></label>
+ <div class="f2"><label>${j.fund>0?'المبلغ على الملّاك':'المبلغ'} (ر.ع)<input id="e_a" type="number" step="0.001" min="0" value="${j.amount}"></label><label>التاريخ<input id="e_d" type="date" value="${esc(j.date)}"></label></div>
+ <label>ملاحظات<input id="e_n" value="${esc(j.note)}"></label><div class="small mut">تغيير المبلغ يعيد حساب الحصص بنفس الأثار، والمدفوعات تبقى كما هي.</div>
+ <div class="row"><button class="pri" onclick="saveMt('${id}')">حفظ</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+function saveMt(id){const j=getJ(id),a=r3($('#e_a').value);if(!(a>0))return alert('اكتب المبلغ');
+ j.title=$('#e_t').value.trim()||j.title;j.date=$('#e_d').value;j.note=$('#e_n').value.trim();
+ if(a!==j.amount){j.amount=a;if(j.fund>0)j.cost=r3(a+j.fund);divide(a,j.shares)}save();closeModal();render();toast('تم الحفظ')}
+function redoMt(id){
+ const j=getJ(id),s=getS(j.src);
+ if(!confirm('إعادة توزيع المبلغ حسب الملّاك والأثار الحاليين في '+s.name+'؟ المدفوعات المسجلة تبقى لأصحابها.'))return;
+ const old=new Map(j.shares.map(x=>[x.name,x.pays||[]]));
+ const L=holdersFor(s,j.incl);L.forEach(x=>{x.pays=old.get(x.name)||[];old.delete(x.name)});
+ old.forEach((pays,name)=>{if(pays.length)L.push({name,athar:0,amt:0,pays})}); // من دفع ولم يعد مالكاً يبقى ظاهراً
+ j.shares=divide(j.amount,L);save();render();toast('تمت إعادة التوزيع');
+}
+function delMt(id){const j=getJ(id);if(!confirm(`حذف «${j.title}» وكل مدفوعاتها؟${j.fund>0?`\nويُعاد ${money(j.fund)} ر.ع إلى رصيد الأموال.`:''}${j.plan?'\nلن يُنشأ قسط لهذا الشهر مرة أخرى.':''}`))return;
+ if(j.plan){const p=DB.jams.find(v=>v.id===j.plan);if(p)(p.skip=p.skip||[]).push(ymOf(j))}
+ if(j.rahn){const m=DB.rahn.find(v=>v.id===j.rahn);if(m)(m.skip=m.skip||[]).push(j.pi+'|'+j.date)}DB.maint=DB.maint.filter(x=>x!==j);DB.fund=DB.fund.filter(t=>t.job!==j.id);state.mt=null;save();render()}
+function printMt(id){
+ const j=getJ(id),s=getS(j.src),T=jobAthar(j);
+ $('#print').innerHTML=`<h1>${j.kind==='rahn'?'قسط رهن أثار':'توزيع '+(isElec(j)?'فاتورة كهرباء':isJam(j)?'جمعية':'مبلغ صيانة')} ${esc(s?s.name:'')} ببلدة ${esc(DB.settings.village)}</h1>
+ <p><b>${esc(j.title)}</b> — بتاريخ ${esc(j.date)} — المبلغ ${money(j.amount)} ر.ع — مجموع الأثار ${fmtN(T)} — سعر الأثر ${money(j.amount/T)} ر.ع</p>
+ <table><thead><tr><th>ت</th><th>المالك</th><th>الأثار</th><th>الحصة (ر.ع)</th><th>المدفوع</th><th>المتبقي</th></tr></thead><tbody>
+ ${j.shares.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.name)}</td><td>${fmtN(x.athar)}</td><td>${money(x.amt)}</td><td>${money(shPaid(x))}</td><td>${money(x.amt-shPaid(x))}</td></tr>`).join('')}
+ <tr><td></td><td><b>المجموع</b></td><td><b>${fmtN(T)}</b></td><td><b>${money(j.amount)}</b></td><td><b>${money(jobPaid(j))}</b></td><td><b>${money(j.amount-jobPaid(j))}</b></td></tr></tbody></table>`;
+ window.print();
+}
+function shareMt(id){
+ const j=getJ(id),s=getS(j.src),T=jobAthar(j);
+ const t=(isElec(j)?`*${j.title} — ${s?s.name:''}*\n`:isJam(j)?`*جمعية ${s?s.name:''} — ${j.title}*\nلدعم رصيد الأموال\nالتاريخ: ${j.date}\n`:`*صيانة ${s?s.name:''} — ${j.title}*\nالتاريخ: ${j.date}\n`)+`المبلغ: ${money(j.amount)} ر.ع\nسعر الأثر: ${money(j.amount/T)} ر.ع\n\n`+
+  j.shares.map((x,i)=>{const r=r3(x.amt-shPaid(x));return `${i+1}- ${x.name}: ${fmtN(x.athar)} أثر = ${money(x.amt)} ر.ع${r<=0?' ✅':shPaid(x)>0?` (متبقي ${money(r)})`:''}`}).join('\n')+
+  `\n\nالمحصّل: ${money(jobPaid(j))} — المتبقي: ${money(j.amount-jobPaid(j))} ر.ع`;
+ modal(`<h3>نص توزيع الصيانة</h3><textarea id="sh" style="min-height:260px">${esc(t)}</textarea>
+ <div class="row"><button class="pri" onclick="copyTxt()">نسخ</button><button onclick="window.open('https://wa.me/?text='+encodeURIComponent($('#sh').value))">فتح واتساب</button><button onclick="closeModal()">إغلاق</button></div>`);
+}
+
+/* ===== فواتير الكهرباء: شهرية، تُقسم حسب الأثار ===== */
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const isElec=j=>j.kind==='elec';
+const elecSrc=()=>state.esrc||'majnab';
+const elecYear=()=>state.ey||new Date().getFullYear();
+const billsOf=(src,y)=>DB.maint.filter(b=>isElec(b)&&b.src===src&&(y==null||b.year===y)).sort((a,b)=>a.year-b.year||a.month-b.month);
+function vElec(){
+ const j=state.mt&&getJ(state.mt);if(j)return vMtJob(j);
+ const src=elecSrc(),s=getS(src),y=elecYear(),now=new Date(),B=billsOf(src,y);
+ const years=[...new Set([y,now.getFullYear(),...billsOf(src).map(b=>b.year)])].sort((a,b)=>b-a);
+ let h=`<div class="chips">${DB.sources.map(x=>`<button class="${x.id===src?'on':''}" onclick="state.esrc='${x.id}';render()">${esc(x.name)}</button>`).join('')}</div>
+ <div class="card"><h2>إضافة فاتورة كهرباء — ${esc(s.name)}</h2><div class="small mut">يُقسم مبلغ الفاتورة على الملّاك حسب عدد الأثار.</div>
+ <input type="hidden" id="m_src" value="${src}">
+ <div class="f2"><label>الشهر<select id="b_m">${MONTHS.map((m,i)=>`<option value="${i+1}" ${i===now.getMonth()?'selected':''}>${i+1} - ${m}</option>`).join('')}</select></label>
+ <label>السنة<input id="b_y" type="number" min="2000" max="2100" value="${now.getFullYear()}"></label>
+ <label>مبلغ الفاتورة (ر.ع)<input id="m_a" type="number" step="0.001" min="0" oninput="mtPrev()"></label>
+ <label>رقم الفاتورة / ملاحظات<input id="b_n"></label></div>
+ <label class="chk"><input id="m_u" type="checkbox" onchange="mtPrev()"> تُحسب حصة على الأثار غير المملوكة أيضاً</label>
+ <div id="m_prev" class="small" style="margin:6px 0"></div>
+ <div class="row"><button class="pri" onclick="addElec()">حفظ وتوزيع الفاتورة</button></div></div>`;
+ h+=`<div class="chips">${years.map(v=>`<button class="${v===y?'on':''}" onclick="state.ey=${v};render()">${v}</button>`).join('')}</div>`;
+ // جدول الشهور
+ let tA=0,tP=0;
+ h+=`<div class="card"><h3>فواتير ${esc(s.name)} — سنة ${y}</h3><div class="tw"><table><thead><tr><th>الشهر</th><th>المبلغ</th><th>سعر الأثر</th><th>المحصّل</th><th>المتبقي</th><th>ملاحظات</th></tr></thead><tbody>`;
+ MONTHS.forEach((m,i)=>{const b=B.find(b=>b.month===i+1);
+  if(!b){h+=`<tr class="zero"><td>${i+1} - ${m}</td><td class="n">—</td><td></td><td></td><td></td><td></td></tr>`;return}
+  const p=jobPaid(b),r=r3(b.amount-p);tA+=b.amount;tP+=p;
+  h+=`<tr class="click" onclick="state.mt='${b.id}';render();scrollTo(0,0)"><td>${i+1} - ${m}</td><td class="n">${money(b.amount)}</td><td class="n">${money(b.amount/jobAthar(b))}</td><td class="n">${money(p)}</td><td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مكتمل</span>'}</td><td class="small">${esc(b.note)}</td></tr>`});
+ h+=`</tbody><tfoot><tr><td>المجموع</td><td class="n">${money(tA)}</td><td></td><td class="n">${money(tP)}</td><td class="n">${money(tA-tP)}</td><td></td></tr></tfoot></table></div><div class="small mut">اضغط على أي شهر لعرض التوزيع وتسجيل التسديد.</div></div>`;
+ // كشف سنوي لكل مالك
+ if(B.length){
+  const N=[];B.forEach(b=>b.shares.forEach(x=>{if(!N.includes(x.name))N.push(x.name)}));
+  h+=`<div class="card"><div class="row" style="justify-content:space-between;margin-top:0"><h3 style="margin:0">كشف الملّاك — سنة ${y}</h3><button onclick="printElecYear()">🖨 طباعة الكشف</button></div>
+  <div class="small mut">الأحمر = غير مسدد · الأخضر = مسدد · اضغط على اسم المالك لتسديد كل المتبقي عليه دفعة واحدة</div>
+  <div class="tw"><table><thead><tr><th>المالك</th>${B.map(b=>`<th>${MONTHS[b.month-1]}</th>`).join('')}<th>المجموع</th><th>المتبقي</th></tr></thead><tbody>`;
+  N.forEach(n=>{let a=0,r=0;
+   const cells=B.map(b=>{const x=b.shares.find(x=>x.name===n);if(!x)return '<td class="n">—</td>';const rem=r3(x.amt-shPaid(x));a+=x.amt;r+=Math.max(0,rem);
+    return `<td class="n" style="color:${rem>0?'var(--bad)':'var(--ok)'}">${money(x.amt)}</td>`}).join('');
+   h+=`<tr class="click" onclick="payAllElec(${esc(JSON.stringify(n))})"><td>${esc(n)}</td>${cells}<td class="n"><b>${money(a)}</b></td><td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مسدد</span>'}</td></tr>`});
+  h+=`</tbody></table></div></div>`;
+ }
+ setTimeout(()=>$('#m_src')&&mtPrev());
+ return h;
+}
+function addElec(){
+ const s=getS($('#m_src').value),m=+$('#b_m').value,y=+$('#b_y').value,a=r3($('#m_a').value),incl=$('#m_u').checked;
+ if(!(y>=2000&&y<=2100))return alert('اكتب السنة');
+ if(!(a>0))return alert('اكتب مبلغ الفاتورة');
+ if(billsOf(s.id,y).some(b=>b.month===m)&&!confirm(`توجد فاتورة مسجلة لشهر ${MONTHS[m-1]} ${y} في ${s.name}. إضافة فاتورة أخرى لنفس الشهر؟`))return;
+ const L=holdersFor(s,incl);if(!L.length)return alert('لا يوجد ملّاك في '+s.name);
+ const j={id:uid(),kind:'elec',src:s.id,year:y,month:m,title:`فاتورة كهرباء ${MONTHS[m-1]} ${y}`,amount:a,date:today(),note:$('#b_n').value.trim(),incl,shares:divide(a,L),at:Date.now()};
+ DB.maint.unshift(j);state.ey=y;state.mt=j.id;save();render();scrollTo(0,0);toast('تم توزيع الفاتورة');
+}
+function payAllElec(n){
+ const src=elecSrc(),y=elecYear(),L=[];
+ billsOf(src,y).forEach(b=>{const x=b.shares.find(x=>x.name===n);if(x){const r=r3(x.amt-shPaid(x));if(r>0)L.push([b,x,r])}});
+ if(!L.length){person(n);return}
+ const t=r3(L.reduce((a,v)=>a+v[2],0));
+ modal(`<h3>تسديد كهرباء — ${esc(n)}</h3><div class="small mut">${esc(getS(src).name)} — سنة ${y}</div>
+ ${L.map(([b,x,r])=>`<div class="small">• ${MONTHS[b.month-1]}: ${money(r)} ر.ع</div>`).join('')}
+ <div class="big">المجموع: ${money(t)} ر.ع</div>
+ <label>تاريخ الدفع<input id="p_d" type="date" value="${today()}"></label>
+ <div class="row"><button class="pri" onclick="savePayAll(${esc(JSON.stringify(n))})">تسديد الكل</button><button onclick="closeModal();person(${esc(JSON.stringify(n))})">تفاصيل المالك</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+function savePayAll(n){
+ const d=$('#p_d').value;
+ billsOf(elecSrc(),elecYear()).forEach(b=>{const x=b.shares.find(x=>x.name===n);if(x){const r=r3(x.amt-shPaid(x));if(r>0)(x.pays=x.pays||[]).push({a:r,d})}});
+ save();closeModal();render();toast('تم التسديد');
+}
+function printElecYear(){
+ const s=getS(elecSrc()),y=elecYear(),B=billsOf(s.id,y),N=[];
+ B.forEach(b=>b.shares.forEach(x=>{if(!N.includes(x.name))N.push(x.name)}));
+ $('#print').innerHTML=`<h1>كشف فواتير كهرباء ${esc(s.name)} ببلدة ${esc(DB.settings.village)} — سنة ${y}</h1>
+ <table><thead><tr><th>المالك</th>${B.map(b=>`<th>${MONTHS[b.month-1]}</th>`).join('')}<th>المجموع</th><th>المتبقي</th></tr></thead><tbody>
+ ${N.map(n=>{let a=0,r=0;const c=B.map(b=>{const x=b.shares.find(x=>x.name===n);if(!x)return'<td>—</td>';const rem=r3(x.amt-shPaid(x));a+=x.amt;r+=Math.max(0,rem);return `<td>${money(x.amt)}${rem>0?'':' ✓'}</td>`}).join('');return `<tr><td>${esc(n)}</td>${c}<td><b>${money(a)}</b></td><td>${money(r)}</td></tr>`}).join('')}
+ <tr><td><b>مبلغ الفاتورة</b></td>${B.map(b=>`<td><b>${money(b.amount)}</b></td>`).join('')}<td><b>${money(B.reduce((a,b)=>a+b.amount,0))}</b></td><td></td></tr></tbody></table>
+ <p>✓ = مسدد</p>`;
+ window.print();
+}
+
+/* ===== مبالغ الأموال (المزارع والنخيل والضواحي التابعة للفلج والطويان) =====
+   الرصيد = الوارد (بيع، رهن، طناء، ثمار، جمعيات) − المنصرف (إصلاحات) */
+const FIN=['بيع','رهن','طناء (تأجير)','بيع ثمار / محصول','تبرع','أخرى'],FOUT=['إصلاح','صيانة','شراء مواد','أخرى'];
+const isJam=j=>j.kind==='jam';
+function allFund(sf){ // الحركات المسجلة + المحصّل من الجمعيات
+ const J=DB.maint.filter(j=>(isJam(j)||j.kind==='rahn')&&jobPaid(j)>0).map(j=>({id:'v-'+j.id,src:j.src,dir:'in',type:isJam(j)?'جمعية':'رهن أثار غير مملوكة',amount:jobPaid(j),date:j.date,party:isJam(j)?'الملّاك':j.shares[0].name,prop:'',note:`${j.title} — محصّل ${money(jobPaid(j))} من ${money(j.amount)}`,jam:j.id,at:j.at}));
+ return [...DB.fund,...J].filter(t=>!sf||sf==='all'||t.src===sf);
+}
+const fundBal=id=>r3(allFund(id).reduce((a,t)=>a+(t.dir==='in'?t.amount:-t.amount),0));
+function fUpd(){const s=getS($('#f_src').value);$('#f_bal').textContent=`الرصيد الحالي: ${money(fundBal(s.id))} ر.ع`}
+function vFund(){
+ const j=state.mt&&getJ(state.mt);if(j)return vMtJob(j);
+ const jp=state.jp&&DB.jams.find(p=>p.id===state.jp);if(jp)return vJamPlan(jp);
+ const sf=state.fs||'all',dir=state.fdir||'in',inn=dir==='in';
+ const tot=r3(DB.sources.reduce((a,s)=>a+fundBal(s.id),0)),props=[...new Set(DB.fund.map(t=>t.prop).filter(Boolean))];
+ let h=`<div class="small mut" style="margin-bottom:8px">الأموال = المزارع والنخيل والضواحي التابعة للفلج والطويان. يتجمع رصيدها من بيعها أو رهنها أو طنائها ومن الجمعيات، ويُصرف على الإصلاحات.</div>
+ <div class="tiles">${DB.sources.map(s=>{const b=fundBal(s.id);return tile('رصيد أموال '+esc(s.name),`<span style="color:${b<0?'var(--bad)':'inherit'}">${money(b)}</span>`,'ر.ع')}).join('')}${tile('مجموع الأرصدة',money(tot),'ر.ع')}</div>`;
+ h+=`<div class="card"><h2>تسجيل حركة</h2>
+ <div class="chips"><button class="${inn?'on':''}" onclick="state.fdir='in';render()">＋ وارد (بيع، رهن، طناء…)</button><button class="${inn?'':'on'}" onclick="state.fdir='out';render()">－ منصرف (إصلاحات)</button></div>
+ <datalist id="dl_props">${props.map(p=>`<option value="${esc(p)}">`).join('')}</datalist>
+ <div class="f2"><label>الفلج / الطوي<select id="f_src" onchange="fUpd()">${DB.sources.map(s=>`<option value="${s.id}" ${s.id===(sf==='all'?state.src:sf)?'selected':''}>${esc(s.name)}</option>`).join('')}</select><span id="f_bal" class="small mut"></span></label>
+ <label>النوع<select id="f_type">${(inn?FIN:FOUT).map(t=>`<option>${t}</option>`).join('')}</select></label>
+ <label>المبلغ (ر.ع)<input id="f_a" type="number" step="0.001" min="0"></label>
+ <label>التاريخ<input id="f_d" type="date" value="${today()}"></label>
+ <label>المال (المزرعة / النخل / الضاحية)<input id="f_prop" list="dl_props"></label>
+ <label>${inn?'المشتري / المرتهن / المستأجر':'الجهة / المقاول'}<input id="f_p" list="dl_names"></label>
+ ${inn?`<label>المدة (للرهن أو الطناء)<input id="f_per" placeholder="مثال: سنة 2026، أو موسم القيظ"></label>`:''}
+ <label>البيان / ملاحظات<input id="f_note" placeholder="${inn?'مثال: طناء نخل الضاحية الشرقية':'مثال: إصلاح ساقية المزرعة'}"></label></div>
+ <div class="row"><button class="pri" onclick="addFund()">حفظ</button></div></div>`;
+ // الجمعيات الشهرية
+ h+=jamSection(sf);
+ // الحركات
+ const L=allFund(sf).sort((a,b)=>String(a.date).localeCompare(b.date)||a.at-b.at);
+ let run=0;const rows=L.map(t=>{run=r3(run+(t.dir==='in'?t.amount:-t.amount));return [t,run]}).reverse();
+ h+=`<div class="chips">${[['all','الكل'],...DB.sources.map(s=>[s.id,s.name])].map(([k,v])=>`<button class="${k===sf?'on':''}" onclick="state.fs='${k}';render()">${esc(v)}</button>`).join('')}</div>
+ <div class="card"><div class="row" style="justify-content:space-between;margin-top:0"><h3 style="margin:0">حركات مبالغ الأموال${sf==='all'?'':' — '+esc(getS(sf).name)}</h3>${L.length?'<button onclick="printFund()">🖨 طباعة كشف الحساب</button>':''}</div>
+ ${L.length?`<div class="tw"><table><thead><tr><th>التاريخ</th>${sf==='all'?'<th>المصدر</th>':''}<th>النوع</th><th>المال</th><th>الجهة / الشخص</th><th>وارد</th><th>منصرف</th><th>الرصيد</th><th>البيان</th><th></th></tr></thead><tbody>
+ ${rows.map(([t,b])=>`<tr><td class="n">${esc(t.date)}</td>${sf==='all'?`<td>${esc(getS(t.src)?.name||'')}</td>`:''}<td>${esc(t.type)}</td><td>${esc(t.prop)}</td><td>${esc(t.party)}</td>
+ <td class="n" style="color:var(--ok)">${t.dir==='in'?money(t.amount):''}</td><td class="n" style="color:var(--bad)">${t.dir==='out'?money(t.amount):''}</td><td class="n"><b>${money(b)}</b></td>
+ <td class="small">${esc(t.note)}${t.period?`<div class="mut">المدة: ${esc(t.period)}</div>`:''}${t.job?'<div class="mut">مدفوع لصيانة</div>':''}</td>
+ <td class="n">${t.jam?`<button class="ic" onclick="state.mt='${t.jam}';render();scrollTo(0,0)">فتح</button>`:`<button class="ic bad" onclick="delFund('${t.id}')">حذف</button>`}</td></tr>`).join('')}
+ </tbody><tfoot><tr><td>المجموع</td>${sf==='all'?'<td></td>':''}<td></td><td></td><td></td><td class="n">${money(L.filter(t=>t.dir==='in').reduce((a,t)=>a+t.amount,0))}</td><td class="n">${money(L.filter(t=>t.dir==='out').reduce((a,t)=>a+t.amount,0))}</td><td class="n">${money(run)}</td><td></td><td></td></tr></tfoot></table></div>`:'<div class="mut">لا توجد حركات بعد.</div>'}</div>`;
+ setTimeout(()=>{$('#f_src')&&fUpd();$('#m_src')&&mtPrev()});
+ return h;
+}
+function addFund(){
+ const inn=(state.fdir||'in')==='in',src=$('#f_src').value,s=getS(src),a=r3($('#f_a').value);
+ if(!(a>0))return alert('اكتب المبلغ');
+ if(!inn&&a>fundBal(src)+1e-9&&!confirm(`رصيد أموال ${s.name} ${money(fundBal(src))} ر.ع فقط، وسيصبح سالباً. متابعة؟`))return;
+ DB.fund.unshift({id:uid(),src,dir:inn?'in':'out',type:$('#f_type').value,amount:a,date:$('#f_d').value,prop:$('#f_prop').value.trim(),party:$('#f_p').value.trim(),period:inn?$('#f_per').value.trim():'',note:$('#f_note').value.trim(),at:Date.now()});
+ save();render();toast('تم التسجيل');
+}
+/* ----- جمعية الفلج / الطوي: مبلغ شهري يُحصّل من الملّاك حسب الأثار، لفترة محددة أو مفتوحة؛ المحصّل يدعم رصيد الأموال -----
+   كل شهر يُنشأ قسط (DB.maint بنوع jam) تلقائياً حتى الشهر الحالي، بحسب الملكية وقت إنشائه */
+const ymNow=()=>today().slice(0,7);
+const ymAdd=(ym,k)=>{let[y,m]=ym.split('-').map(Number);m+=k;y+=Math.floor((m-1)/12);m=((m-1)%12+12)%12+1;return `${y}-${String(m).padStart(2,'0')}`};
+const ymTxt=ym=>ym?`${MONTHS[+ym.slice(5)-1]} ${ym.slice(0,4)}`:'';
+const planJobs=p=>DB.maint.filter(j=>j.plan===p.id).sort((a,b)=>a.year-b.year||a.month-b.month);
+function planAmount(p,s){if(p.mode!=='rate')return p.amount;return r3(p.amount*holdersFor(s,p.incl).reduce((a,x)=>a+x.athar,0))}
+function planStatus(p){const n=ymNow();if(p.end&&p.end<n)return['منتهية','b-warn'];if(p.start>n)return['لم تبدأ','b-warn'];return[p.end?'جارية حتى '+ymTxt(p.end):'جارية — مفتوحة','b-ok']}
+function ensureJams(){ // ينشئ أقساط الشهور المستحقة
+ let made=0;const n=ymNow();
+ DB.jams.forEach(p=>{const s=getS(p.src);if(!s)return;const last=p.end&&p.end<n?p.end:n;
+  for(let ym=p.start;ym<=last;ym=ymAdd(ym,1)){
+   const y=+ym.slice(0,4),m=+ym.slice(5);if((p.skip||[]).includes(ym)||DB.maint.some(j=>j.plan===p.id&&j.year===y&&j.month===m))continue;
+   const L=holdersFor(s,p.incl);if(!L.length)break;const a=planAmount(p,s);
+   DB.maint.push({id:uid(),kind:'jam',plan:p.id,src:p.src,year:y,month:m,title:`${p.title} — ${MONTHS[m-1]} ${y}`,amount:a,date:`${ym}-01`,note:'',incl:p.incl,shares:divide(a,L),at:Date.now()});made++}});
+ if(made)save();
+}
+function jamSection(sf){
+ const def=sf==='all'?state.src:sf,P=DB.jams.filter(p=>sf==='all'||p.src===sf);
+ let h=`<div class="card"><h2>جمعية الفلج / الطوي</h2><div class="small mut">مبلغ شهري يُحصّل من الملّاك حسب الأثار، لفترة محددة (أشهر أو سنوات) أو مفتوحة. يُنشأ قسط كل شهر تلقائياً، وما يُحصّل يدخل في رصيد الأموال.</div>
+ <div class="f2"><label>الفلج / الطوي<select id="j_src" onchange="jamPrev()">${DB.sources.map(s=>`<option value="${s.id}" ${s.id===def?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
+ <label>اسم الجمعية<input id="j_t" placeholder="مثال: جمعية دعم أموال الفلج"></label>
+ <label>طريقة التحديد<select id="j_mode" onchange="jamPrev()"><option value="total">مبلغ شهري كلي يُقسم على الأثار</option><option value="rate">مبلغ شهري لكل أثر</option></select></label>
+ <label>المبلغ (ر.ع)<input id="j_a" type="number" step="0.001" min="0" oninput="jamPrev()"></label>
+ <label>من شهر<input id="j_s" type="month" value="${ymNow()}"></label>
+ <label>إلى شهر (اتركه فارغاً إذا كانت مفتوحة)<input id="j_e" type="month"></label></div>
+ <label class="chk"><input id="j_u" type="checkbox" onchange="jamPrev()"> تُحسب حصة على الأثار غير المملوكة غير المرهونة أيضاً</label>
+ <div id="j_prev" class="small" style="margin:6px 0"></div>
+ <div class="row"><button class="pri" onclick="addJam()">إنشاء الجمعية</button></div>`;
+ if(P.length)h+=`<div class="tw" style="margin-top:8px"><table><thead><tr><th>الجمعية</th><th>المصدر</th><th>القسط الشهري</th><th>الفترة</th><th>الأشهر</th><th>المحصّل</th><th>المتبقي</th><th>الحالة</th></tr></thead><tbody>
+ ${P.map(p=>{const J=planJobs(p),a=r3(J.reduce((x,j)=>x+j.amount,0)),pd=r3(J.reduce((x,j)=>x+jobPaid(j),0)),st=planStatus(p);
+  return `<tr class="click" onclick="state.jp='${p.id}';state.jy=null;render();scrollTo(0,0)"><td>${esc(p.title)}</td><td>${esc(getS(p.src)?.name||'')}</td><td class="n">${p.mode==='rate'?money(p.amount)+' لكل أثر':money(p.amount)}</td><td class="small">${ymTxt(p.start)} — ${p.end?ymTxt(p.end):'مفتوحة'}</td><td class="n">${J.length}</td><td class="n">${money(pd)}</td><td class="n">${a-pd>0?`<span class="badge b-warn">${money(a-pd)}</span>`:'—'}</td><td><span class="badge ${st[1]}">${esc(st[0])}</span></td></tr>`}).join('')}
+ </tbody></table></div><div class="small mut">اضغط على الجمعية لعرض كشف الأشهر وتسجيل التسديد.</div>`;
+ const old=DB.maint.filter(j=>isJam(j)&&!j.plan&&(sf==='all'||j.src===sf));
+ if(old.length)h+=`<div class="small" style="margin-top:8px">جمعيات سابقة لمرة واحدة: ${old.map(j=>`<button class="ic" onclick="state.mt='${j.id}';render()">${esc(j.title)}</button>`).join(' ')}</div>`;
+ setTimeout(()=>$('#j_src')&&jamPrev());
+ return h+'</div>';
+}
+function jamPrev(){
+ const s=getS($('#j_src').value),a=+$('#j_a').value,L=holdersFor(s,$('#j_u').checked),T=num(L.reduce((x,h)=>x+h.athar,0));
+ if(!T){$('#j_prev').textContent='لا يوجد ملّاك';return}
+ const rate=$('#j_mode').value==='rate';
+ $('#j_prev').innerHTML=`يُقسم على ${L.length} مالك — ${fmtN(T)} أثر${a>0?(rate?` — <b>القسط الشهري الكلي = ${money(a*T)} ر.ع</b>`:` — <b>على كل أثر ${money(a/T)} ر.ع شهرياً</b>`):''}`;
+}
+function addJam(){
+ const s=getS($('#j_src').value),t=$('#j_t').value.trim(),a=r3($('#j_a').value),start=$('#j_s').value,end=$('#j_e').value;
+ if(!t)return alert('اكتب اسم الجمعية');
+ if(!(a>0))return alert('اكتب المبلغ');
+ if(!start)return alert('اختر شهر البداية');
+ if(end&&end<start)return alert('شهر النهاية قبل البداية');
+ if(!holdersFor(s,$('#j_u').checked).length)return alert('لا يوجد ملّاك في '+s.name);
+ if(start<ymNow()&&!confirm(`البداية في ${ymTxt(start)} — ستُنشأ أقساط الأشهر الماضية حتى الآن بحسب الملكية الحالية. متابعة؟`))return;
+ const p={id:uid(),src:s.id,title:t,mode:$('#j_mode').value,amount:a,start,end:end||'',incl:$('#j_u').checked,at:Date.now()};
+ DB.jams.unshift(p);ensureJams();state.jp=p.id;save();render();scrollTo(0,0);toast('تم إنشاء الجمعية');
+}
+function vJamPlan(p){
+ const s=getS(p.src),J=planJobs(p),st=planStatus(p);
+ const years=[...new Set(J.map(j=>j.year))].sort((a,b)=>b-a),y=state.jy||years[0]||+ymNow().slice(0,4),B=J.filter(j=>j.year===y);
+ const a=r3(J.reduce((x,j)=>x+j.amount,0)),pd=r3(J.reduce((x,j)=>x+jobPaid(j),0));
+ let h=`<div class="row"><button onclick="state.jp=null;render()">→ رجوع لمبالغ الأموال</button></div>
+ <div class="card"><div class="row" style="justify-content:space-between;margin-top:0"><h2 style="margin:0">${esc(p.title)}</h2><span class="badge ${st[1]}">${esc(st[0])}</span></div>
+ <div class="small mut">${esc(s.name)} · من ${ymTxt(p.start)} ${p.end?'إلى '+ymTxt(p.end):'(مفتوحة)'} · القسط ${p.mode==='rate'?money(p.amount)+' ر.ع لكل أثر شهرياً':money(p.amount)+' ر.ع شهرياً يُقسم على الأثار'}</div>
+ <div class="units" style="margin:10px 0"><span>الأشهر: <b>${J.length}</b></span><span>المطلوب: <b>${money(a)}</b></span><span>المحصّل (دخل الرصيد): <b>${money(pd)}</b></span><span>المتبقي: <b>${money(a-pd)}</b></span></div>
+ <div class="bar"><i style="width:${a?Math.min(100,pd/a*100).toFixed(1):0}%"></i></div>
+ <div class="row"><button onclick="editJam('${p.id}')">✎ تعديل / إيقاف</button><button class="bad" onclick="delJam('${p.id}')">حذف الجمعية</button></div></div>`;
+ if(years.length>1)h+=`<div class="chips">${years.map(v=>`<button class="${v===y?'on':''}" onclick="state.jy=${v};render()">${v}</button>`).join('')}</div>`;
+ if(!B.length)return h+'<div class="card mut">لا توجد أقساط بعد — تبدأ في '+ymTxt(p.start)+'.</div>';
+ const N=[];B.forEach(b=>b.shares.forEach(x=>{if(!N.includes(x.name))N.push(x.name)}));
+ h+=`<div class="card"><h3>كشف الأقساط — ${y}</h3><div class="small mut">اضغط على الشهر لتفاصيله · الأحمر = غير مسدد · اضغط على اسم المالك لتسديد كل المتبقي عليه في هذه الجمعية</div>
+ <div class="tw"><table><thead><tr><th>المالك</th>${B.map(b=>`<th class="click" onclick="state.mt='${b.id}';render();scrollTo(0,0)" style="cursor:pointer;text-decoration:underline">${MONTHS[b.month-1]}</th>`).join('')}<th>المجموع</th><th>المتبقي</th></tr></thead><tbody>`;
+ N.forEach(n=>{let t=0,r=0;
+  const c=B.map(b=>{const x=b.shares.find(x=>x.name===n);if(!x)return '<td class="n">—</td>';const rem=r3(x.amt-shPaid(x));t+=x.amt;r+=Math.max(0,rem);return `<td class="n" style="color:${rem>0?'var(--bad)':'var(--ok)'}">${money(x.amt)}</td>`}).join('');
+  h+=`<tr class="click" onclick="payAllJam('${p.id}',${esc(JSON.stringify(n))})"><td>${esc(n)}</td>${c}<td class="n"><b>${money(t)}</b></td><td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مسدد</span>'}</td></tr>`});
+ h+=`</tbody><tfoot><tr><td>القسط</td>${B.map(b=>`<td class="n">${money(b.amount)}</td>`).join('')}<td class="n">${money(B.reduce((x,b)=>x+b.amount,0))}</td><td class="n">${money(B.reduce((x,b)=>x+b.amount-jobPaid(b),0))}</td></tr></tfoot></table></div></div>`;
+ return h;
+}
+function payAllJam(pid,n){
+ const p=DB.jams.find(v=>v.id===pid),L=[];
+ planJobs(p).forEach(b=>{const x=b.shares.find(x=>x.name===n);if(x){const r=r3(x.amt-shPaid(x));if(r>0)L.push([b,r])}});
+ if(!L.length){person(n);return}
+ const t=r3(L.reduce((a,v)=>a+v[1],0));
+ modal(`<h3>تسديد جمعية — ${esc(n)}</h3><div class="small mut">${esc(p.title)}</div>
+ ${L.map(([b,r])=>`<div class="small">• ${MONTHS[b.month-1]} ${b.year}: ${money(r)} ر.ع</div>`).join('')}
+ <div class="big">المجموع: ${money(t)} ر.ع</div>
+ <label>تاريخ الدفع<input id="p_d" type="date" value="${today()}"></label>
+ <div class="row"><button class="pri" onclick="savePayAllJam('${pid}',${esc(JSON.stringify(n))})">تسديد الكل</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+function savePayAllJam(pid,n){const d=$('#p_d').value,p=DB.jams.find(v=>v.id===pid);
+ planJobs(p).forEach(b=>{const x=b.shares.find(x=>x.name===n);if(x){const r=r3(x.amt-shPaid(x));if(r>0)(x.pays=x.pays||[]).push({a:r,d})}});
+ save();closeModal();render();toast('تم التسديد')}
+function editJam(pid){
+ const p=DB.jams.find(v=>v.id===pid);
+ modal(`<h3>تعديل الجمعية</h3><label>الاسم<input id="ej_t" value="${esc(p.title)}"></label>
+ <div class="f2"><label>${p.mode==='rate'?'المبلغ لكل أثر شهرياً':'القسط الشهري الكلي'} (ر.ع)<input id="ej_a" type="number" step="0.001" min="0" value="${p.amount}"></label>
+ <label>إلى شهر (فارغ = مفتوحة)<input id="ej_e" type="month" value="${esc(p.end)}"></label></div>
+ <div class="small mut">تغيير المبلغ يسري على الأشهر القادمة فقط، والأقساط المنشأة تبقى كما هي (ويمكن تعديل أي شهر من صفحته).</div>
+ <div class="row"><button class="pri" onclick="saveJam('${pid}')">حفظ</button><button onclick="document.getElementById('ej_e').value='${ymNow()}';saveJam('${pid}')">إيقاف بعد هذا الشهر</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+function saveJam(pid){const p=DB.jams.find(v=>v.id===pid),a=r3($('#ej_a').value),e=$('#ej_e').value;
+ if(!(a>0))return alert('اكتب المبلغ');if(e&&e<p.start)return alert('شهر النهاية قبل البداية');
+ const later=planJobs(p).filter(j=>e&&ymOf(j)>e);
+ if(later.some(j=>jobPaid(j)>0))return alert('توجد أقساط مسددة بعد هذا الشهر — لا يمكن الإيقاف قبلها');
+ if(later.length&&!confirm(`سيتم حذف ${later.length} قسط بعد ${ymTxt(e)}. متابعة؟`))return;
+ DB.maint=DB.maint.filter(j=>!later.includes(j));
+ p.title=$('#ej_t').value.trim()||p.title;p.amount=a;p.end=e||'';save();closeModal();render();toast('تم الحفظ')}
+const ymOf=j=>`${j.year}-${String(j.month).padStart(2,'0')}`;
+function delJam(pid){const p=DB.jams.find(v=>v.id===pid),J=planJobs(p),pd=r3(J.reduce((x,j)=>x+jobPaid(j),0));
+ if(!confirm(`حذف «${p.title}» وكل أقساطها (${J.length})؟${pd>0?`\nسيُخصم المحصّل ${money(pd)} ر.ع من رصيد الأموال.`:''}`))return;
+ DB.maint=DB.maint.filter(j=>j.plan!==pid);DB.jams=DB.jams.filter(v=>v!==p);state.jp=null;save();render()}
+function delFund(id){
+ const t=DB.fund.find(x=>x.id===id);if(!t)return;
+ if(t.sale||t.rahn)return alert('هذه الحركة من بيع أو رهن الأثار غير المملوكة — عدّلها من تبويب «الأثار غير المملوكة».');
+ if(t.job){const j=getJ(t.job);return alert(`هذا المبلغ مدفوع لصيانة «${j?j.title:''}». احذف الصيانة من تبويب الصيانة إذا أردت إلغاءه.`)}
+ if(!confirm(`حذف هذه الحركة (${money(t.amount)} ر.ع)؟`))return;
+ DB.fund=DB.fund.filter(x=>x!==t);save();render();
+}
+function printFund(){
+ const sf=state.fs||'all',L=allFund(sf).sort((a,b)=>String(a.date).localeCompare(b.date)||a.at-b.at);let run=0;
+ $('#print').innerHTML=`<h1>كشف حساب مبالغ الأموال — ${sf==='all'?'الفلج والطويان':esc(getS(sf).name)} ببلدة ${esc(DB.settings.village)}</h1><div style="margin-bottom:8px">بتاريخ ${today()}</div>
+ <table><thead><tr><th>التاريخ</th>${sf==='all'?'<th>المصدر</th>':''}<th>النوع</th><th>المال</th><th>الجهة / الشخص</th><th>وارد</th><th>منصرف</th><th>الرصيد</th><th>البيان</th></tr></thead><tbody>
+ ${L.map(t=>{run=r3(run+(t.dir==='in'?t.amount:-t.amount));return `<tr><td>${esc(t.date)}</td>${sf==='all'?`<td>${esc(getS(t.src)?.name||'')}</td>`:''}<td>${esc(t.type)}</td><td>${esc(t.prop)}</td><td>${esc(t.party)}</td><td>${t.dir==='in'?money(t.amount):''}</td><td>${t.dir==='out'?money(t.amount):''}</td><td>${money(run)}</td><td>${esc(t.note)}${t.period?' — '+esc(t.period):''}</td></tr>`}).join('')}
+ <tr><td colspan="${sf==='all'?5:4}"><b>الرصيد</b></td><td></td><td></td><td><b>${money(run)}</b></td><td></td></tr></tbody></table>`;
+ window.print();
+}
+/* ===== الأثار غير المملوكة: البيع (تنتقل الملكية) والرهن (لمدة، يُجدد أو يُنقل) — والمبالغ للرصيد =====
+   الأثار المرهونة يتحمّل مرتهنها كل المطالب المالية كالمالك (انظر holdersFor) */
+const unownedOf=s=>num(s.holders.filter(h=>h.unowned).reduce((a,h)=>a+(+h.athar||0),0));
+const curP=m=>m.periods[m.periods.length-1];
+const rahnActive=sid=>DB.rahn.filter(m=>m.status==='active'&&(!sid||m.src===sid));
+const mortOf=sid=>num(rahnActive(sid).reduce((a,m)=>a+m.athar,0));
+const freeOf=s=>num(unownedOf(s)-mortOf(s.id));
+const expired=m=>m.status==='active'&&!!curP(m).end&&curP(m).end<today();
+function fundTx(o){const t={id:uid(),dir:'in',prop:'',party:'',period:'',note:'',at:Date.now(),...o};DB.fund.unshift(t);return t.id}
+function readFile(inp){return new Promise((res,rej)=>{const f=inp&&inp.files[0];if(!f)return res(null);
+ if(f.type.startsWith('image/')){const u=URL.createObjectURL(f),img=new Image();img.onload=()=>{const k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);res({name:f.name,type:'image/jpeg',data:c.toDataURL('image/jpeg',.72)})};img.onerror=()=>rej(new Error('صورة غير صالحة'));img.src=u}
+ else{if(f.size>10e6)return rej(new Error('حجم الملف أكبر من 10 ميجا — صوّر العقد بالجوال بدلاً من ذلك'));const r=new FileReader();r.onload=()=>res({name:f.name,type:f.type||'application/pdf',data:r.result});r.onerror=()=>rej(new Error('تعذّرت قراءة الملف'));r.readAsDataURL(f)}})}
+async function keepFile(inp){const o=await readFile(inp);if(!o)return null;const id=uid();DB.files[id]=o;return id}
+function openFile(id){const o=DB.files[id];if(!o)return alert('الملف غير موجود');fetch(o.data).then(r=>r.blob()).then(b=>window.open(URL.createObjectURL(b),'_blank'))}
+const fileBtn=id=>id&&DB.files[id]?`<button class="ic" onclick="openFile('${id}')">📄 العقد</button>`:'';
+const srcOpts=sel=>DB.sources.map(s=>`<option value="${s.id}" ${s.id===sel?'selected':''}>${esc(s.name)} (متاح ${fmtN(freeOf(s))} أثر)</option>`).join('');
+function vUn(){
+ const jj=state.mt&&getJ(state.mt);if(jj)return vMtJob(jj);
+ const act=state.uact||'sell',def=(DB.sources.find(s=>freeOf(s)>0)||DB.sources[0]).id;
+ let h=`<div class="small mut" style="margin-bottom:8px">الأثار غير المملوكة تتبع الفلج أو الطوي. عند بيعها تنتقل ملكيتها للمشتري، وعند رهنها يتحمّل المرتهن كل المطالب المالية عنها (صيانة، كهرباء، جمعيات) كالمالك. وكل المبالغ تدخل في رصيد الأموال.</div>
+ <div class="tiles">${DB.sources.map(s=>tile(esc(s.name),`${fmtN(unownedOf(s))} أثر`,`مرهونة ${fmtN(mortOf(s.id))} · متاحة ${fmtN(freeOf(s))}`)).join('')}</div>
+ <div class="card"><div class="chips"><button class="${act==='sell'?'on':''}" onclick="state.uact='sell';render()">بيع أثار</button><button class="${act==='rahn'?'on':''}" onclick="state.uact='rahn';render()">رهن أثار</button></div>`;
+ if(act==='sell')h+=`<h2>بيع أثار غير مملوكة</h2><div class="small mut">تُنقل الأثار من «أثار غير مملوكة» إلى المشتري في الجدول، ويدخل الثمن في رصيد الأموال، ويُحفظ العقد.</div>
+ <div class="f2"><label>الفلج / الطوي<select id="u_src">${srcOpts(def)}</select></label>
+ <label>عدد الأثار<input id="u_at" type="number" step="0.5" min="0"></label>
+ <label>المشتري<input id="u_to" list="dl_names"></label>
+ <label>الثمن (ر.ع)<input id="u_a" type="number" step="0.001" min="0"></label>
+ <label>تاريخ البيع<input id="u_d" type="date" value="${today()}"></label>
+ <label>رقم عقد البيع<input id="u_no"></label>
+ <label>صورة العقد أو ملف PDF<input id="u_f" type="file" accept="image/*,application/pdf"></label>
+ <label>ملاحظات<input id="u_n"></label></div>
+ <div class="row"><button class="pri" onclick="addSale()">تسجيل البيع</button></div>`;
+ else h+=`<h2>رهن أثار غير مملوكة</h2><div class="small mut">يبقى الأثر ملكاً للفلج أو الطوي. القسط قد يكون مرة واحدة أو سنوياً أو شهرياً، ويتكرر على المرتهن كل سنة أو شهر حتى يُفك الرهن أو يُنقل لشخص آخر. كل ما يُدفع يدخل الرصيد، ويتحمّل المرتهن المطالب المالية عن الأثار طوال الرهن.</div>
+ <div class="f2"><label>الفلج / الطوي<select id="u_src">${srcOpts(def)}</select></label>
+ <label>عدد الأثار<input id="u_at" type="number" step="0.5" min="0"></label>
+ <label>المرتهن<input id="u_to" list="dl_names"></label>
+ ${rahnFields(null,'new')}</div>
+ <div class="row"><button class="pri" onclick="addRahn()">تسجيل الرهن</button></div>`;
+ h+='</div>';
+ // الرهون
+ const A=DB.rahn.filter(m=>m.status==='active'),E=DB.rahn.filter(m=>m.status!=='active');
+ const rRow=m=>{const p=[...m.periods].reverse().find(q=>q.kind!=='فك')||curP(m),ex=expired(m),J=rahnJobs(m),ra=r3(J.reduce((x,j)=>x+j.amount,0)),rp=r3(J.reduce((x,j)=>x+jobPaid(j),0));return `<tr><td>${esc(getS(m.src)?.name||'')}</td><td class="n">${fmtN(m.athar)}</td><td>${esc(p.to)}</td><td class="n">${money(p.amount||0)}<div class="small mut">${FREQ[p.freq||'once']}</div></td><td class="n">${esc(p.start||'')}</td><td class="n">${esc(p.end||(m.status==='active'?'مستمر':'—'))}</td><td class="n">${money(ra)}</td><td class="n">${money(rp)}</td><td class="n">${ra-rp>0?`<span class="badge b-warn">${money(ra-rp)}</span>`:'—'}</td>
+  <td>${m.status==='active'?(ex?'<span class="badge b-bad">انتهت المدة</span>':'<span class="badge b-ok">قائم</span>'):`<span class="badge b-warn">${esc(m.status==='released'?'مفكوك':m.status)}</span>`}${m.periods.length>1?`<div class="small mut">${m.periods.length} عمليات</div>`:''}</td>
+  <td class="n">${m.status==='active'?`<button class="ic" onclick="rahnAct('${m.id}','renew')">تجديد / تعديل</button><button class="ic" onclick="rahnAct('${m.id}','move')">نقل لشخص آخر</button><button class="ic" onclick="rahnAct('${m.id}','release')">فك الرهن</button>`:''}<button class="ic" onclick="rahnHist('${m.id}')">الأقساط والسجل</button>${fileBtn(p.file)}</td></tr>`};
+ const rHead='<thead><tr><th>المصدر</th><th>الأثار</th><th>المرتهن</th><th>القسط</th><th>من</th><th>إلى</th><th>المطلوب</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th></th></tr></thead>';
+ h+=`<div class="card"><h3>الرهون القائمة (${A.length})</h3>${A.length?`<div class="tw"><table>${rHead}<tbody>${A.map(rRow).join('')}</tbody></table></div>`:'<div class="mut">لا توجد رهون قائمة.</div>'}
+ ${E.length?`<details style="margin-top:10px"><summary>رهون منتهية (${E.length})</summary><div class="tw"><table>${rHead}<tbody>${E.map(rRow).join('')}</tbody></table></div></details>`:''}</div>`;
+ // المبيعات
+ h+=`<div class="card"><h3>الأثار المبيعة (${DB.sales.length})</h3>${DB.sales.length?`<div class="tw"><table><thead><tr><th>التاريخ</th><th>المصدر</th><th>الأثار</th><th>المشتري</th><th>الثمن</th><th>رقم العقد</th><th>ملاحظات</th><th></th></tr></thead><tbody>
+ ${DB.sales.map(x=>`<tr><td class="n">${esc(x.date)}</td><td>${esc(getS(x.src)?.name||'')}</td><td class="n">${fmtN(x.athar)}</td><td>${esc(x.buyer)}</td><td class="n">${money(x.price)}</td><td>${esc(x.contract||'')}</td><td class="small">${esc(x.note||'')}</td><td class="n">${fileBtn(x.file)}<button class="ic" onclick="attachSale('${x.id}')">${x.file?'تغيير العقد':'إرفاق العقد'}</button><button class="ic bad" onclick="cancelSale('${x.id}')">إلغاء البيع</button></td></tr>`).join('')}
+ </tbody></table></div>`:'<div class="mut">لا توجد مبيعات.</div>'}</div>`;
+ return h;
+}
+function uForm(){
+ const s=getS($('#u_src').value),at=num($('#u_at').value),to=$('#u_to').value.trim(),a=$('#u_a')?r3($('#u_a').value):0;
+ if(!(at>0))return alert('اكتب عدد الأثار');
+ if(at>freeOf(s)+1e-9)return alert(`الأثار غير المملوكة المتاحة في ${s.name} ${fmtN(freeOf(s))} أثر فقط`);
+ if(!to)return alert('اكتب الاسم');
+ if(to==='أثار غير مملوكة')return alert('اكتب اسم شخص');
+ if(!(a>=0))return alert('اكتب المبلغ');
+ return {s,at,to,a};
+}
+async function addSale(){
+ const f=uForm();if(!f)return;const {s,at,to,a}=f,date=$('#u_d').value,no=$('#u_no').value.trim(),note=$('#u_n').value.trim();
+ if(!confirm(`بيع ${fmtN(at)} أثر من ${s.name} إلى «${to}» بمبلغ ${money(a)} ر.ع؟\nتنتقل الملكية في الجدول ويدخل المبلغ في رصيد الأموال.`))return;
+ let file;try{file=await keepFile($('#u_f'))}catch(e){return alert(e.message)}
+ const u=s.holders.find(h=>h.unowned&&h.athar>=at);if(!u)return alert('لا توجد أثار غير مملوكة كافية');
+ const x={id:uid(),src:s.id,athar:at,buyer:to,price:a,date,contract:no,file,note,at:Date.now()};
+ u.athar=num(u.athar-at);let b=s.holders.find(h=>h.name===to);const created=!b;
+ if(!b){b={id:uid(),name:to,alias:'',athar:0,note:'',unowned:false};s.holders.splice(s.holders.indexOf(u),0,b)}
+ b.athar=num(b.athar+at);
+ const e={id:uid(),date,type:'بيع',from:u.name,to,athar:at,sources:[s.id],note:`بيع أثار غير مملوكة بـ${money(a)} ر.ع${no?' — عقد رقم '+no:''}`,created:created?{[s.id]:b.id}:{},sale:x.id,at:Date.now()};
+ DB.log.unshift(e);x.log=e.id;
+ if(a>0)x.fund=fundTx({src:s.id,type:'بيع أثار غير مملوكة',amount:a,date,party:to,note:`بيع ${fmtN(at)} أثر${no?' — عقد رقم '+no:''}`,sale:x.id});
+ DB.sales.unshift(x);save();render();toast('تم تسجيل البيع ونقل الملكية');
+}
+function attachSale(id){const x=DB.sales.find(v=>v.id===id);
+ modal(`<h3>عقد البيع — ${esc(x.buyer)}</h3><label>رقم العقد<input id="a_no" value="${esc(x.contract||'')}"></label><label>صورة العقد أو PDF<input id="a_f" type="file" accept="image/*,application/pdf"></label>
+ <div class="row"><button class="pri" onclick="saveAttach('${id}')">حفظ</button><button onclick="closeModal()">إلغاء</button></div>`)}
+async function saveAttach(id){const x=DB.sales.find(v=>v.id===id);let f;try{f=await keepFile($('#a_f'))}catch(e){return alert(e.message)}
+ if(f){if(x.file)delete DB.files[x.file];x.file=f}x.contract=$('#a_no').value.trim();save();closeModal();render();toast('تم الحفظ')}
+function cancelSale(id){
+ const x=DB.sales.find(v=>v.id===id),s=getS(x.src),b=s.holders.find(h=>h.name===x.buyer);
+ if(!b||b.athar<x.athar-1e-9)return alert(`لا يمكن الإلغاء: «${x.buyer}» لم يعد يملك ${fmtN(x.athar)} أثر في ${s.name}`);
+ if(!confirm(`إلغاء بيع ${fmtN(x.athar)} أثر لـ«${x.buyer}»؟ تعود الأثار غير مملوكة ويُخصم ${money(x.price)} ر.ع من الرصيد ويُحذف العقد.`))return;
+ b.athar=num(b.athar-x.athar);let u=s.holders.find(h=>h.unowned);
+ if(!u){u={id:uid(),name:'أثار غير مملوكة',alias:'',athar:0,note:'',unowned:true};s.holders.push(u)}
+ u.athar=num(u.athar+x.athar);
+ const e=DB.log.find(v=>v.id===x.log);if(e&&e.created[s.id]===b.id&&b.athar<=0)s.holders=s.holders.filter(h=>h!==b);
+ DB.log=DB.log.filter(v=>v.id!==x.log);DB.fund=DB.fund.filter(t=>t.sale!==x.id);if(x.file)delete DB.files[x.file];
+ DB.sales=DB.sales.filter(v=>v!==x);save();render();toast('تم إلغاء البيع');
+}
+/* ----- الرهن: قسط مرة واحدة أو سنوي أو شهري؛ القسط يتكرر على المرتهن كل سنة/شهر حتى الفك أو النقل، والمدفوع يدخل الرصيد -----
+   الأقساط تُنشأ تلقائياً (ensureRahn) كبنود في DB.maint بنوع rahn وحصة واحدة باسم المرتهن */
+const FREQ={once:'مرة واحدة',year:'سنوي',month:'شهري'},FREQ_UNIT={once:'',year:' سنوياً',month:' شهرياً'};
+function addPeriod(d,freq,k){const[y,m,da]=d.split('-').map(Number),t=m-1+k*(freq==='year'?12:1),y2=y+Math.floor(t/12),m2=(t%12+12)%12+1,dim=new Date(y2,m2,0).getDate();return `${y2}-${String(m2).padStart(2,'0')}-${String(Math.min(da,dim)).padStart(2,'0')}`}
+const rahnJobs=m=>DB.maint.filter(j=>j.rahn===m.id).sort((a,b)=>String(a.date).localeCompare(b.date));
+function ensureRahn(){
+ let made=0;const t=today();
+ DB.rahn.forEach(m=>{
+  const P=m.periods,rel=m.status!=='active'?((P.find(q=>q.kind==='فك')||{}).start||'0000'):null;
+  P.forEach((p,pi)=>{
+   if(p.kind==='فك'||!(p.amount>0)||!p.start)return;
+   const nx=P.slice(pi+1).find(q=>q.start),stop=nx?nx.start:null,f=p.freq||'once';
+   for(let k=0,d=p.start;;k++,d=addPeriod(p.start,f,k)){
+    if(d>t||(p.end&&d>p.end)||(stop&&d>=stop)||(rel&&d>=rel))break;
+    if(!(m.skip||[]).includes(pi+'|'+d)&&!DB.maint.some(j=>j.rahn===m.id&&j.pi===pi&&j.date===d)){
+     const s=getS(m.src);
+     DB.maint.push({id:uid(),kind:'rahn',rahn:m.id,pi,src:m.src,year:+d.slice(0,4),month:+d.slice(5,7),date:d,
+      title:`${f==='once'?'رهن':'قسط رهن '+FREQ[f]} ${fmtN(m.athar)} أثر غير مملوكة — ${s?s.name:''} — ${f==='month'?ymTxt(d.slice(0,7)):d}`,
+      amount:p.amount,note:'',shares:[{name:p.to,athar:m.athar,amt:p.amount,pays:[]}],at:Date.now()});made++}
+    if(f==='once')break;
+   }
+  })});
+ if(made)save();
+}
+function pruneRahn(m,from){ // عند النقل أو التجديد أو الفك: تُحذف أقساط العملية السابقة غير المسددة من ذلك التاريخ
+ const L=DB.maint.filter(j=>j.rahn===m.id&&j.date>=from);
+ if(L.some(j=>jobPaid(j)>0)&&!confirm('توجد أقساط مسددة بعد هذا التاريخ وستبقى كما هي. متابعة؟'))return false;
+ DB.maint=DB.maint.filter(j=>!(L.includes(j)&&jobPaid(j)===0));return true;
+}
+function payFirst(m,pi){const p=m.periods[pi],j=DB.maint.find(j=>j.rahn===m.id&&j.pi===pi&&j.date===p.start);if(j){const x=j.shares[0],r=r3(x.amt-shPaid(x));if(r>0)x.pays.push({a:r,d:p.start})}}
+const rahnFields=(p,kind)=>`<label>نوع القسط<select id="r_fq">${Object.entries(FREQ).map(([k,v])=>`<option value="${k}" ${(p?p.freq||'once':'year')===k?'selected':''}>${v}</option>`).join('')}</select></label>
+ <label>مبلغ القسط (ر.ع)<input id="r_a" type="number" step="0.001" min="0" value="${p&&kind==='renew'?p.amount:''}"></label>
+ <label>من تاريخ<input id="r_s" type="date" value="${today()}"></label>
+ <label>إلى تاريخ (فارغ = مستمر حتى الفك أو النقل)<input id="r_e" type="date"></label>
+ <label>رقم العقد<input id="r_no"></label>
+ <label>صورة العقد أو PDF<input id="r_f" type="file" accept="image/*,application/pdf"></label>
+ <label>ملاحظات<input id="r_n"></label>
+ <label class="chk"><input id="r_pd" type="checkbox" checked> استُلم القسط الأول الآن</label>`;
+async function addRahn(){
+ const f=uForm();if(!f)return;const {s,at,to}=f,a=r3($('#r_a').value),freq=$('#r_fq').value,start=$('#r_s').value,end=$('#r_e').value;
+ if(!(a>0))return alert('اكتب مبلغ القسط');
+ if(!start)return alert('اختر تاريخ البداية');
+ if(end&&end<start)return alert('تاريخ النهاية قبل البداية');
+ let file;try{file=await keepFile($('#r_f'))}catch(e){return alert(e.message)}
+ const m={id:uid(),src:s.id,athar:at,status:'active',periods:[{kind:'رهن',to,amount:a,freq,start,end,contract:$('#r_no').value.trim(),file,note:$('#r_n').value.trim(),date:start}],at:Date.now()};
+ DB.rahn.unshift(m);ensureRahn();if($('#r_pd').checked)payFirst(m,0);save();render();toast('تم تسجيل الرهن');
+}
+function rahnAct(id,kind){
+ const m=DB.rahn.find(v=>v.id===id),p=curP(m),s=getS(m.src);
+ const T={renew:'تجديد الرهن / تعديل القسط',move:'نقل الرهن لشخص آخر',release:'فك الرهن'}[kind];
+ let h=`<h3>${T}</h3><div class="small mut">${esc(s.name)} — ${fmtN(m.athar)} أثر — المرتهن الحالي: ${esc(p.to)} — القسط ${money(p.amount)}${FREQ_UNIT[p.freq||'once']}</div>`;
+ if(kind==='release')h+=`<div class="small">تتوقف الأقساط من تاريخ الفك، وما بقي غير مسدد من الأقساط السابقة يبقى على صاحبه.</div><div class="f2"><label>تاريخ الفك<input id="r_d" type="date" value="${today()}"></label><label>مبلغ يُرجع للمرتهن من الرصيد (إن وُجد)<input id="r_a" type="number" step="0.001" min="0"></label><label>ملاحظات<input id="r_n"></label></div>`;
+ else h+=`<div class="small">${kind==='move'?'تتوقف أقساط المرتهن الحالي من تاريخ النقل وتبدأ أقساط المرتهن الجديد.':'تبدأ الأقساط الجديدة من التاريخ المحدد بدلاً من السابقة.'}</div><div class="f2">${kind==='move'?'<label>المرتهن الجديد<input id="r_to" list="dl_names"></label>':''}${rahnFields(p,kind)}</div>`;
+ modal(h+`<div class="row"><button class="pri" onclick="saveRahnAct('${id}','${kind}')">حفظ</button><button onclick="closeModal()">إلغاء</button></div>`);
+}
+async function saveRahnAct(id,kind){
+ const m=DB.rahn.find(v=>v.id===id),p=curP(m),a=r3($('#r_a').value),note=$('#r_n').value.trim();
+ if(kind==='release'){const d=$('#r_d').value;if(!d)return alert('اختر تاريخ الفك');
+  if(a>0&&a>fundBal(m.src)+1e-9&&!confirm('المبلغ أكبر من رصيد الأموال وسيصبح سالباً. متابعة؟'))return;
+  if(!pruneRahn(m,d))return;
+  const q={kind:'فك',to:p.to,amount:-a,start:d,end:'',note,date:d};
+  if(a>0)q.fund=fundTx({src:m.src,dir:'out',type:'فك رهن أثار',amount:a,date:d,party:p.to,note:`إرجاع مبلغ رهن ${fmtN(m.athar)} أثر`,rahn:m.id});
+  m.periods.push(q);m.status='released';save();closeModal();render();toast('تم فك الرهن');return}
+ const to=kind==='move'?$('#r_to').value.trim():p.to,start=$('#r_s').value,end=$('#r_e').value;
+ if(!to)return alert('اكتب اسم المرتهن الجديد');
+ if(kind==='move'&&to===p.to)return alert('نفس المرتهن الحالي — استخدم «تجديد»');
+ if(!(a>0))return alert('اكتب مبلغ القسط');
+ if(!start)return alert('اختر تاريخ البداية');
+ if(end&&end<start)return alert('تاريخ النهاية قبل البداية');
+ let file;try{file=await keepFile($('#r_f'))}catch(e){return alert(e.message)}
+ if(!pruneRahn(m,start))return;
+ m.periods.push({kind:kind==='renew'?'تجديد':'نقل',to,from:p.to,amount:a,freq:$('#r_fq').value,start,end,contract:$('#r_no').value.trim(),file,note,date:start});
+ ensureRahn();if($('#r_pd').checked)payFirst(m,m.periods.length-1);save();closeModal();render();toast(kind==='renew'?'تم تجديد الرهن':'تم نقل الرهن');
+}
+function rahnHist(id){
+ const m=DB.rahn.find(v=>v.id===id),J=rahnJobs(m),a=r3(J.reduce((x,j)=>x+j.amount,0)),pd=r3(J.reduce((x,j)=>x+jobPaid(j),0));
+ modal(`<h3>رهن ${fmtN(m.athar)} أثر — ${esc(getS(m.src).name)}</h3>
+ <b>العمليات</b><div class="tw"><table><thead><tr><th>العملية</th><th>المرتهن</th><th>القسط</th><th>من</th><th>إلى</th><th></th></tr></thead><tbody>
+ ${m.periods.map(p=>`<tr><td>${esc(p.kind)}${p.from?`<div class="small mut">من ${esc(p.from)}</div>`:''}${p.note?`<div class="small mut">${esc(p.note)}</div>`:''}</td><td>${esc(p.to)}</td><td class="n">${p.amount<0?'إرجاع '+money(-p.amount):money(p.amount||0)+(FREQ_UNIT[p.freq||'once']||'')}</td><td class="n">${esc(p.start||'')}</td><td class="n">${esc(p.end||(p.kind==='فك'?'':'مستمر'))}</td><td>${fileBtn(p.file)}${p.contract?`<div class="small">عقد ${esc(p.contract)}</div>`:''}</td></tr>`).join('')}
+ </tbody></table></div>
+ <b>الأقساط</b> <span class="small mut">المطلوب ${money(a)} · المدفوع ${money(pd)} · المتبقي ${money(a-pd)}</span>
+ ${J.length?`<div class="tw"><table><thead><tr><th>التاريخ</th><th>المرتهن</th><th>القسط</th><th>المدفوع</th><th></th></tr></thead><tbody>
+ ${J.map(j=>{const x=j.shares[0],r=r3(x.amt-shPaid(x));return `<tr><td class="n">${esc(j.date)}</td><td>${esc(x.name)}</td><td class="n">${money(x.amt)}</td><td class="n">${money(shPaid(x))}</td><td class="n">${r>0?`<button class="ic" onclick="payMt('${j.id}',0)">تسديد</button>`:'<span class="badge b-ok">مسدد</span>'}</td></tr>`}).join('')}
+ </tbody></table></div>`:'<div class="mut small">لم يحن موعد أي قسط بعد.</div>'}
+ <div class="row"><button class="bad" onclick="delRahn('${id}')">حذف الرهن نهائياً</button><button onclick="closeModal()">إغلاق</button></div>`);
+}
+function delRahn(id){
+ const m=DB.rahn.find(v=>v.id===id);if(!confirm('حذف هذا الرهن وكل أقساطه ومبالغه من الرصيد؟ (للأخطاء فقط — للإنهاء العادي استخدم «فك الرهن»)'))return;
+ DB.fund=DB.fund.filter(t=>t.rahn!==id);DB.maint=DB.maint.filter(j=>j.rahn!==id);m.periods.forEach(p=>{if(p.file)delete DB.files[p.file]});DB.rahn=DB.rahn.filter(v=>v!==m);save();closeModal();render();
+}
+
+/* ===== الإحصائيات والتقارير ===== */
+const jobYear=j=>isElec(j)?j.year:+String(j.date).slice(0,4);
+const jobMonth=j=>isElec(j)?j.month:+String(j.date).slice(5,7);
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+function repJobs(){const y=state.ry||'all',s=state.rs||'all';return DB.maint.filter(j=>(y==='all'||jobYear(j)===+y)&&(s==='all'||j.src===s))}
+function tile(l,v,s){return `<div class="tile"><div class="l">${l}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`}
+function vRep(){
+ const y=state.ry||'all',sf=state.rs||'all',J=repJobs(),SS=sf==='all'?DB.sources:[getS(sf)];
+ const years=[...new Set([new Date().getFullYear(),...DB.maint.map(jobYear),...DB.log.map(e=>+String(e.date).slice(0,4))].filter(v=>v>0))].sort((a,b)=>b-a);
+ let h=`<div class="card noprint"><div class="f2"><label>السنة<select onchange="state.ry=this.value;render()"><option value="all">كل السنوات</option>${years.map(v=>`<option ${String(v)===String(y)?'selected':''}>${v}</option>`).join('')}</select></label>
+ <label>المصدر<select onchange="state.rs=this.value;render()"><option value="all">الفلج والطويان معاً</option>${DB.sources.map(s=>`<option value="${s.id}" ${s.id===sf?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label></div>
+ <div class="row"><button onclick="printRep()">🖨 طباعة التقرير</button></div></div><div id="rep">`;
+ const title=`${sf==='all'?'الفلج والطويان':getS(sf).name} — ${y==='all'?'كل السنوات':'سنة '+y}`;
+ h+=`<h2 style="margin:4px 0 12px">تقرير ${esc(title)}</h2>`;
+ // أرقام عامة
+ const owners=new Set(),aw=new Map();let own=0,un=0;
+ SS.forEach(s=>s.holders.forEach(x=>{if(!(x.athar>0))return;if(x.unowned){un+=x.athar;return}own+=x.athar;owners.add(x.name);aw.set(x.name,(aw.get(x.name)||0)+x.athar)}));
+ const mt=J.filter(j=>!j.kind),el=J.filter(isElec),jm=J.filter(j=>isJam(j)||j.kind==='rahn'),sum=L=>r3(L.reduce((a,j)=>a+j.amount,0)),cost=L=>r3(L.reduce((a,j)=>a+(j.cost||j.amount),0));
+ const FD=allFund().filter(t=>(y==='all'||+String(t.date).slice(0,4)===+y)&&(sf==='all'||t.src===sf)),fin=r3(FD.filter(t=>t.dir==='in').reduce((a,t)=>a+t.amount,0)),fout=r3(FD.filter(t=>t.dir==='out').reduce((a,t)=>a+t.amount,0));
+ const tot=sum(J),paid=r3(J.reduce((a,j)=>a+jobPaid(j),0)),rem=r3(tot-paid);
+ const TR=DB.log.filter(e=>(y==='all'||+String(e.date).slice(0,4)===+y)&&(sf==='all'||e.sources.includes(sf)));
+ h+=`<div class="tiles">${tile('عدد الملّاك',owners.size)}${tile('الأثار المملوكة',fmtN(own),un?`غير مملوكة: ${fmtN(un)} أثر`:'')}
+ ${tile('مصروف الصيانة',money(cost(mt)),`${mt.length} عملية · ر.ع${cost(mt)>sum(mt)?` · منها ${money(cost(mt)-sum(mt))} من الأموال`:''}`)}${tile('فواتير الكهرباء',money(sum(el)),`${el.length} فاتورة · ر.ع`)}${jm.length?tile('الجمعيات وأقساط الرهن',money(sum(jm)),`${jm.length} قسط · ر.ع`):''}
+ ${tile('المحصّل',money(paid),`نسبة التحصيل ${pct(paid,tot)}%`)}${tile('المتبقي على الملّاك',money(rem),'ر.ع')}
+ ${tile('عمليات نقل الملكية',TR.length,TR.length?TR.filter(e=>e.type!=='رهن').reduce((a,e)=>a+e.athar,0)+' أثر منقولة':'')}
+ ${tile('رصيد مبالغ الأموال',money(SS.reduce((a,s)=>a+fundBal(s.id),0)),`وارد ${money(fin)} · منصرف ${money(fout)} في الفترة`)}</div>`;
+ // المصاريف حسب الشهر / السنة
+ const B=[];
+ if(y==='all'){const ys=[...new Set(J.map(jobYear))].sort((a,b)=>a-b);ys.forEach(v=>{const L=J.filter(j=>jobYear(j)===v);B.push({l:String(v),t:v,a:sum(L),p:r3(L.reduce((x,j)=>x+jobPaid(j),0))})})}
+ else MONTHS.forEach((m,i)=>{const L=J.filter(j=>jobMonth(j)===i+1);B.push({l:String(i+1),t:m,a:sum(L),p:r3(L.reduce((x,j)=>x+jobPaid(j),0))})});
+ const mx=Math.max(...B.map(b=>b.a),0);
+ h+=`<div class="card"><h3>المبالغ المطلوبة من الملّاك (صيانة، كهرباء، جمعيات) ${y==='all'?'حسب السنة':'حسب الشهر'}</h3>`;
+ if(mx>0){
+  h+=`<div class="lg"><span><b style="background:var(--pri)"></b>المحصّل</span><span><b style="background:var(--pri3)"></b>المتبقي</span></div>
+  <div class="cc">${B.map(b=>{const H=b.a/mx*100,r=r3(b.a-b.p);return `<div class="ccc" title="${esc(b.t)}: المبلغ ${money(b.a)} · المحصّل ${money(b.p)} · المتبقي ${money(r)} ر.ع">${b.a?`<div class="ccv" style="bottom:calc(${H}% + 3px)">${b.a>=100?Math.round(b.a):money(b.a).replace(/\.?0+$/,'')}</div>`:''}${r>0?`<i class="r" style="height:${r/mx*100}%"></i>`:''}${b.p>0?`<i class="p" style="height:${b.p/mx*100}%"></i>`:''}</div>`}).join('')}</div>
+  <div class="ccl">${B.map(b=>`<span>${esc(b.l)}</span>`).join('')}</div>`;
+ }else h+='<div class="mut">لا توجد مصاريف في هذه الفترة.</div>';
+ h+=`</div>`;
+ // حسب المصدر والنوع
+ h+=`<div class="card"><h3>المبالغ المطلوبة حسب المصدر</h3><div class="tw"><table><thead><tr><th>المصدر</th><th>الصيانة</th><th>الكهرباء</th><th>الجمعيات والرهون</th><th>المجموع</th><th>المحصّل</th><th>المتبقي</th><th>التحصيل</th></tr></thead><tbody>
+ ${SS.map(s=>{const L=J.filter(j=>j.src===s.id),a=sum(L),p=r3(L.reduce((x,j)=>x+jobPaid(j),0));return `<tr><td>${esc(s.name)}</td><td class="n">${money(sum(L.filter(j=>!j.kind)))}</td><td class="n">${money(sum(L.filter(isElec)))}</td><td class="n">${money(sum(L.filter(j=>isJam(j)||j.kind==='rahn')))}</td><td class="n"><b>${money(a)}</b></td><td class="n">${money(p)}</td><td class="n">${money(a-p)}</td><td class="n">${a?pct(p,a)+'%':'—'}</td></tr>`}).join('')}
+ </tbody><tfoot><tr><td>المجموع</td><td class="n">${money(sum(mt))}</td><td class="n">${money(sum(el))}</td><td class="n">${money(sum(jm))}</td><td class="n">${money(tot)}</td><td class="n">${money(paid)}</td><td class="n">${money(rem)}</td><td class="n">${tot?pct(paid,tot)+'%':'—'}</td></tr></tfoot></table></div></div>`;
+ if(allFund().length)h+=`<div class="card"><h3>مبالغ الأموال حسب المصدر</h3><div class="tw"><table><thead><tr><th>المصدر</th><th>وارد (بيع، رهن، طناء…)</th><th>منصرف (إصلاحات)</th><th>الرصيد الحالي</th></tr></thead><tbody>
+ ${SS.map(s=>{const L=FD.filter(t=>t.src===s.id),i=L.filter(t=>t.dir==='in').reduce((a,t)=>a+t.amount,0),o=L.filter(t=>t.dir==='out').reduce((a,t)=>a+t.amount,0);return `<tr><td>${esc(s.name)}</td><td class="n">${money(i)}</td><td class="n">${money(o)}</td><td class="n"><b>${money(fundBal(s.id))}</b></td></tr>`}).join('')}
+ </tbody></table></div><div class="small mut">الوارد والمنصرف خلال الفترة المختارة، والرصيد هو الرصيد الحالي.</div></div>`;
+ // حصص الملكية
+ const cyc=SS.length*FULL,OW=[...aw].sort((a,b)=>b[1]-a[1]),amx=Math.max(...OW.map(x=>x[1]),un,1);
+ h+=`<div class="card"><h3>حصص الملكية${sf==='all'?' (مجموع الفلج والطويين)':' في '+esc(getS(sf).name)}</h3><div class="small mut">النسبة من مجموع ${fmtN(cyc)} أثر${sf==='all'?'':' — والساعات في الأسبوع'}</div>
+ ${OW.map(([n,a])=>`<div class="hb" title="${esc(n)}: ${fmtN(a)} أثر"><div class="hbn">${esc(n)}</div><div class="hbt"><i style="width:${(a/amx*100).toFixed(1)}%"></i></div><div class="hbv">${fmtN(a)} أثر · ${(a/cyc*100).toFixed(1)}%${sf==='all'?'':' · '+durText(a*30)}</div></div>`).join('')}
+ ${un?`<div class="hb"><div class="hbn">أثار غير مملوكة</div><div class="hbt"><i class="un" style="width:${(un/amx*100).toFixed(1)}%"></i></div><div class="hbv">${fmtN(un)} أثر · ${(un/cyc*100).toFixed(1)}%</div></div>`:''}</div>`;
+ // الحساب المالي لكل مالك
+ const F=new Map();J.forEach(j=>j.shares.forEach(x=>{const o=F.get(x.name)||{c:0,p:0};o.c+=x.amt;o.p+=shPaid(x);F.set(x.name,o)}));
+ const FL=[...F].map(([n,o])=>[n,r3(o.c),r3(o.p),r3(o.c-o.p)]).sort((a,b)=>b[3]-a[3]||b[1]-a[1]);
+ if(FL.length)h+=`<div class="card"><h3>الحساب المالي لكل مالك</h3><div class="small mut noprint">مرتب حسب الأكثر تأخراً — اضغط على الاسم لكشف حسابه</div><div class="tw"><table><thead><tr><th>المالك</th><th>الأثار</th><th>المطلوب</th><th>المدفوع</th><th>المتبقي</th><th>التسديد</th></tr></thead><tbody>
+ ${FL.map(([n,c,p,r])=>`<tr class="click" onclick="person(${esc(JSON.stringify(n))})"><td>${esc(n)}</td><td class="n">${fmtN(aw.get(n)||0)}</td><td class="n">${money(c)}</td><td class="n">${money(p)}</td><td class="n">${r>0?`<span class="badge b-warn">${money(r)}</span>`:'<span class="badge b-ok">مسدد</span>'}</td><td class="n">${pct(p,c)}%</td></tr>`).join('')}
+ </tbody><tfoot><tr><td>المجموع</td><td></td><td class="n">${money(tot)}</td><td class="n">${money(paid)}</td><td class="n">${money(rem)}</td><td class="n">${pct(paid,tot)}%</td></tr></tfoot></table></div></div>`;
+ // نقل الملكية حسب النوع
+ if(TR.length){const T=new Map();TR.forEach(e=>{const o=T.get(e.type)||{n:0,a:0};o.n++;o.a+=e.athar;T.set(e.type,o)});
+  h+=`<div class="card"><h3>عمليات نقل الملكية</h3><div class="tw"><table><thead><tr><th>النوع</th><th>عدد العمليات</th><th>الأثار</th></tr></thead><tbody>${[...T].map(([t,o])=>`<tr><td>${esc(t)}</td><td class="n">${o.n}</td><td class="n">${fmtN(o.a)}</td></tr>`).join('')}</tbody></table></div></div>`}
+ return h+'</div>';
+}
+function printRep(){$('#print').innerHTML=`<div style="font-size:12px;margin-bottom:6px">${esc(DB.settings.village?'بلدة '+DB.settings.village:'')} — ${today()}</div>`+$('#rep').innerHTML;window.print()}
+function printOwner(n){
+ let h=`<h1>كشف حساب: ${esc(n)}</h1><div style="margin-bottom:8px">بلدة ${esc(DB.settings.village)} — بتاريخ ${today()}</div>
+ <h3>الملكية</h3><table><thead><tr><th>المصدر</th><th>الأثار</th><th>الساعات</th><th>الوقت في الأسبوع</th></tr></thead><tbody>`;
+ DB.sources.forEach(s=>{const r=sched(s).find(r=>r.h.name===n);h+=`<tr><td>${esc(s.name)}</td><td>${r?fmtN(r.h.athar):'—'}</td><td>${r?durText(r.dur):'—'}</td><td>${r?esc(span(r)):'لا يملك'}</td></tr>`});
+ h+='</tbody></table>';
+ const M=[];DB.maint.forEach(j=>j.shares.forEach(x=>{if(x.name===n)M.push([j,x])}));
+ M.sort((a,b)=>jobYear(a[0])-jobYear(b[0])||jobMonth(a[0])-jobMonth(b[0]));
+ if(M.length){let c=0,p=0;
+  h+=`<h3>الصيانة والكهرباء والجمعيات</h3><table><thead><tr><th>البيان</th><th>المصدر</th><th>الأثار</th><th>الحصة</th><th>المدفوع</th><th>المتبقي</th></tr></thead><tbody>
+  ${M.map(([j,x])=>{const pd=shPaid(x);c+=x.amt;p+=pd;return `<tr><td>${esc(j.title)}${isElec(j)?'':' ('+esc(j.date)+')'}</td><td>${esc(getS(j.src)?.name||'')}</td><td>${fmtN(x.athar)}</td><td>${money(x.amt)}</td><td>${money(pd)}</td><td>${money(x.amt-pd)}</td></tr>`}).join('')}
+  <tr><td colspan="3"><b>المجموع</b></td><td><b>${money(c)}</b></td><td><b>${money(p)}</b></td><td><b>${money(c-p)}</b></td></tr></tbody></table>`;
+ }else h+='<p>لا توجد مبالغ صيانة أو كهرباء أو جمعيات.</p>';
+ const L=DB.log.filter(e=>e.from===n||e.to===n);
+ if(L.length)h+=`<h3>عمليات نقل الملكية</h3><table><thead><tr><th>التاريخ</th><th>النوع</th><th>من</th><th>إلى</th><th>الأثار</th></tr></thead><tbody>${L.map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.type)}</td><td>${esc(e.from)}</td><td>${esc(e.to)}</td><td>${fmtN(e.athar)}</td></tr>`).join('')}</tbody></table>`;
+ $('#print').innerHTML=h;window.print();
+}
+
+/* ===== تعديل الملّاك ===== */
+function mv(sid,k,d){const H=getS(sid).holders,j=k+d;if(j<0||j>=H.length)return;[H[k],H[j]]=[H[j],H[k]];save();render()}
+function editHolder(sid,hid){
+ const s=getS(sid),x=hid?s.holders.find(h=>h.id===hid):null;
+ modal(`<h3>${x?'تعديل':'إضافة'} مالك — ${esc(s.name)}</h3>
+ <label>الاسم<input id="f_n" list="dl_names" value="${esc(x?x.name:'')}"></label>
+ <label>اسم آخر / الاسم في الكشف القديم<input id="f_a" value="${esc(x?x.alias:'')}"></label>
+ <label>عدد الأثار<input id="f_t" type="number" step="0.5" min="0" value="${x?x.athar:''}"></label>
+ ${x?'':`<label>مكانه في الدور<select id="f_pos"><option value="-1">في آخر الدور</option>${s.holders.map((h,k)=>`<option value="${k}">بعد ${esc(h.name)}</option>`).join('')}</select></label>`}
+ <label>ملاحظات<textarea id="f_note">${esc(x?x.note:'')}</textarea></label>
+ <label class="chk"><input id="f_u" type="checkbox" ${x&&x.unowned?'checked':''}> أثار غير مملوكة</label>
+ ${x?'<div class="small mut">لتسجيل بيع أو إرث استخدم «نقل الملكية» حتى يبقى في السجل.</div>':''}
+ <div class="row"><button class="pri" onclick="saveHolder('${sid}','${hid||''}')">حفظ</button>${x?`<button class="bad" onclick="delHolder('${sid}','${hid}')">حذف</button>`:''}<button onclick="closeModal()">إلغاء</button></div>`);
+}
+function saveHolder(sid,hid){
+ const s=getS(sid),n=$('#f_n').value.trim(),a=num($('#f_t').value);
+ if(!n)return alert('اكتب الاسم');
+ if(s.holders.some(h=>h.name===n&&h.id!==hid))return alert('هذا الاسم موجود في '+s.name);
+ const v={name:n,alias:$('#f_a').value.trim(),athar:a,note:$('#f_note').value.trim(),unowned:$('#f_u').checked};
+ if(hid){const x=s.holders.find(h=>h.id===hid),old=x.name;Object.assign(x,v);
+  if(old!==n){DB.log.forEach(e=>{if(e.sources.includes(sid)){if(e.from===old)e.from=n;if(e.to===old)e.to=n}});
+   DB.maint.forEach(j=>{if(j.src===sid)j.shares.forEach(x=>{if(x.name===old)x.name=n})})}}
+ else{const p=+$('#f_pos').value,h={id:uid(),...v};if(p<0)s.holders.push(h);else s.holders.splice(p+1,0,h)}
+ save();closeModal();render();toast('تم الحفظ');
+}
+function delHolder(sid,hid){const s=getS(sid),x=s.holders.find(h=>h.id===hid);if(!confirm(`حذف «${x.name}» من ${s.name}؟ (${fmtN(x.athar)} أثر)`))return;s.holders=s.holders.filter(h=>h!==x);save();closeModal();render()}
+
+/* ===== طباعة ومشاركة ===== */
+function printSrc(id){
+ const s=getS(id),S=sched(s),un=s.holders.filter(h=>h.unowned).reduce((a,h)=>a+h.athar,0);
+ $('#print').innerHTML=`<h1>عرضة ${esc(s.name)} ببلدة ${esc(DB.settings.village)}</h1>
+ <table><thead><tr><th>ت</th><th>الاسم</th><th>عدد الأثار</th><th>عدد الساعات</th><th>الوقت</th><th>الملاحظات</th></tr></thead><tbody>
+ ${S.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.h.name)}</td><td>${fmtN(r.h.athar)}</td><td>${durText(r.dur)}</td><td>${esc(span(r))}</td><td>${esc(r.h.note)}</td></tr>`).join('')}
+ <tr><td></td><td><b>المجموع</b></td><td><b>${fmtN(total(s))}</b></td><td><b>${durText(total(s)*30)}</b></td><td></td><td></td></tr></tbody></table>
+ ${un?`<p><b>يوجد ${fmtN(un)} أثر ماء غير مملوكة</b></p>`:''}
+ <div class="pfoot"><div>أثر الماء = نصف ساعة<br>نصف أثر = ربع ساعة</div><div>البادة = 24 أثر<br>البادة المغلقة = 48 أثر</div><div>كتب هذه العريضة العبد الفقير إلى الله<br>${esc(DB.settings.writer)}</div></div>`;
+ window.print();
+}
+function srcText(s){return `*عرضة ${s.name} ببلدة ${DB.settings.village}*\n\n`+sched(s).map((r,i)=>`${i+1}- ${r.h.name}: ${fmtN(r.h.athar)} أثر (${durText(r.dur)})\n    ${span(r)}`).join('\n')+`\n\nالمجموع: ${fmtN(total(s))} أثر\nأثر الماء = نصف ساعة`}
+function shareSrc(id){
+ const t=srcText(getS(id));
+ modal(`<h3>نص العرضة</h3><textarea id="sh" style="min-height:260px">${esc(t)}</textarea>
+ <div class="row"><button class="pri" onclick="copyTxt()">نسخ</button><button onclick="window.open('https://wa.me/?text='+encodeURIComponent($('#sh').value))">فتح واتساب</button><button onclick="closeModal()">إغلاق</button></div>`);
+}
+function copyTxt(){const a=$('#sh');a.select();try{navigator.clipboard.writeText(a.value).then(()=>toast('تم النسخ'),()=>{document.execCommand('copy');toast('تم النسخ')})}catch(e){document.execCommand('copy');toast('تم النسخ')}}
+
+/* ===== الإعدادات والنسخ ===== */
+function vSet(){
+ if(navigator.storage&&navigator.storage.estimate)setTimeout(()=>navigator.storage.estimate().then(e=>{const el=$('#st_est');if(el)el.textContent=`المساحة المستخدمة ${(e.usage/1048576).toFixed(1)} ميجا من ${(e.quota/1073741824).toFixed(1)} جيجا متاحة`}).catch(()=>{}));
+ return `<div class="card"><h2>عام</h2><div class="f2">
+ <label>اسم البلدة<input value="${esc(DB.settings.village)}" onchange="DB.settings.village=this.value.trim();save();render()"></label>
+ <label>كاتب العريضة (يظهر في الطباعة)<input value="${esc(DB.settings.writer)}" onchange="DB.settings.writer=this.value.trim();save()"></label></div></div>
+ <div class="card"><h2>بداية الدور الأسبوعي</h2>${DB.sources.map(s=>`<div class="f2"><label>${esc(s.name)} — يوم البداية<select onchange="getS('${s.id}').startDay=+this.value;save()">${DAYS.map((d,i)=>`<option value="${i}" ${i===s.startDay?'selected':''}>${d}</option>`).join('')}</select></label>
+ <label>الساعة (24 ساعة)<input type="time" value="${esc(s.startTime)}" onchange="getS('${s.id}').startTime=this.value||'07:30';save()"></label></div>`).join('')}</div>
+ <div class="card"><h2>مكان حفظ البيانات</h2>
+ <div>✅ البيانات محفوظة في <b>ذاكرة ${MOBILE?'الهاتف':'الجهاز'}</b> (قاعدة بيانات داخلية دائمة)${useIDB?'':' — <span style="color:var(--bad)">تعذّر استخدامها، الحفظ في تخزين المتصفح المحدود</span>'}.</div>
+ <div class="small mut" id="st_est"></div>
+ ${canFile()?`<div style="margin-top:10px">${fileH?`📁 وتُحفظ أيضاً تلقائياً بعد كل تعديل في الملف: <b>${esc(fileH.name)}</b> ${filePerm?'<span class="badge b-ok">يعمل</span>':'<span class="badge b-warn">متوقف</span>'}${fileErr?`<div class="small" style="color:var(--bad)">${esc(fileErr)}</div>`:''}
+  <div class="row">${filePerm?'':'<button class="pri" onclick="regrant()">متابعة الحفظ في الملف</button>'}<button onclick="pickFile()">تغيير الملف</button><button onclick="unlinkFile()">إيقاف</button></div>`
+  :`<div class="small">يمكنك أيضاً حفظ نسخة تلقائية في ملف على الكمبيوتر (مثلاً داخل مجلد «قاعدة البيانات للفلج وطويان البلاد») تتحدّث بعد كل تعديل:</div><div class="row"><button class="pri" onclick="pickFile()">اختيار ملف الحفظ على الجهاز</button></div>`}</div>`:''}
+ </div>
+ <div class="card"><h2>المزامنة والنسخ الاحتياطي</h2>
+ <div class="small mut">آخر تعديل على هذا الجهاز: ${fmtDate(DB.updated)}</div>
+ <div class="row"><button class="pri" onclick="backup()">إرسال البيانات / حفظ نسخة</button><button onclick="$('#imp').click()">استلام البيانات / استرجاع نسخة</button><input id="imp" type="file" accept=".json,application/json,text/plain,*/*" style="display:none" onchange="restore(this.files[0])"><button onclick="exportXls()">تصدير إلى Excel</button></div>
+ <div class="small mut">لنقل البيانات بين الكمبيوتر والجوال: اضغط «إرسال البيانات» على الجهاز الذي عدّلت فيه، وأرسل الملف لنفسك، ثم «استلام البيانات» على الجهاز الآخر. الاستلام يستبدل بيانات الجهاز بالملف، فعدّل على جهاز واحد في كل مرة.</div></div>
+ ${MOBILE?'':`<div class="card"><h2>إعادة البيانات الأصلية</h2><div class="small mut">يمسح كل التعديلات والسجل ويرجع البيانات كما في ملف Excel والعروض.</div><div class="row"><button class="bad" onclick="if(confirm('مسح كل التعديلات والرجوع للبيانات الأصلية؟')){DB=seed();save();render();toast('تمت الإعادة')}">إعادة البيانات الأصلية</button></div></div>`}`;
+}
+async function backup(){
+ if(!DB.updated)save();
+ const name=`الفلج والطويان - ${today()}.json`,data=JSON.stringify(DB,null,1);
+ try{const f=new File([data],name,{type:'application/json'});
+  if(MOBILE&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'بيانات الفلج والطويان'});return}}catch(e){if(e&&e.name==='AbortError')return}
+ download(data,name,'application/json');toast('تم حفظ الملف');
+}
+function applyData(text){
+ let d;try{d=JSON.parse(text);if(!d||!Array.isArray(d.sources)||!d.settings)throw 0}catch(e){alert('الملف غير صالح');return}
+ let msg=`استبدال بيانات هذا الجهاز ببيانات الملف؟\n\nتاريخ الملف: ${fmtDate(d.updated)}\nبيانات هذا الجهاز: ${fmtDate(DB.updated)}`;
+ if(!isEmpty()&&DB.updated&&d.updated&&d.updated<DB.updated)msg='⚠ هذا الملف أقدم من البيانات الموجودة على هذا الجهاز!\n\n'+msg;
+ if(!isEmpty()&&!confirm(msg))return;
+ d.updated=d.updated||Date.now();DB=d;migrate();persist();
+ state.tab='home';render();toast('تم استلام البيانات');
+}
+function restore(f){if(!f)return;const r=new FileReader();r.onload=()=>applyData(r.result);r.readAsText(f)}
+function exportXls(){
+ const ws=[];
+ DB.sources.forEach(s=>{ws.push([s.name,[['ت','الاسم','عدد الأثار','عدد الساعات','الوقت','ملاحظات'],...sched(s).map((r,i)=>[i+1,r.h.name,r.h.athar,durText(r.dur),span(r),r.h.note]),['','المجموع',total(s),durText(total(s)*30),'','']]])});
+ ws.push(['الملّاك',[['الاسم',...DB.sources.map(s=>s.name),'المجموع'],...names().map(n=>{const v=DB.sources.map(s=>{const x=s.holders.find(h=>h.name===n);return x?x.athar:0});return [n,...v,num(v.reduce((a,b)=>a+b,0))]})]]);
+ ws.push(['الصيانة والكهرباء',[['التاريخ','المصدر','البيان','المبلغ الكلي','سعر الأثر','المالك','الأثار','الحصة','المدفوع','المتبقي'],...DB.maint.flatMap(j=>j.shares.map(x=>[j.date,getS(j.src)?.name||'',j.title,j.amount,r3(j.amount/jobAthar(j)),x.name,x.athar,x.amt,shPaid(x),r3(x.amt-shPaid(x))]))]]);
+ ws.push(['مبالغ الأموال',[['التاريخ','المصدر','الحركة','النوع','المال','الجهة / الشخص','المدة','وارد','منصرف','البيان'],...allFund().sort((a,b)=>String(a.date).localeCompare(b.date)).map(t=>[t.date,getS(t.src)?.name||'',t.dir==='in'?'وارد':'منصرف',t.type,t.prop||'',t.party||'',t.period||'',t.dir==='in'?t.amount:'',t.dir==='out'?t.amount:'',t.note])]]);
+ ws.push(['بيع الأثار غير المملوكة',[['التاريخ','المصدر','الأثار','المشتري','الثمن','رقم العقد','ملاحظات'],...DB.sales.map(x=>[x.date,getS(x.src)?.name||'',x.athar,x.buyer,x.price,x.contract||'',x.note||''])]]);
+ ws.push(['رهن الأثار غير المملوكة',[['المصدر','الأثار','الحالة','العملية','المرتهن','القسط','نوع القسط','من','إلى','رقم العقد','ملاحظات'],...DB.rahn.flatMap(m=>m.periods.map(p=>[getS(m.src)?.name||'',m.athar,m.status==='active'?'قائم':'مفكوك',p.kind,p.to,p.amount||0,p.kind==='فك'?'':FREQ[p.freq||'once'],p.start||'',p.end||'',p.contract||'',p.note||'']))]]);
+ ws.push(['المستحقات',[['المالك','المتبقي عليه (ر.ع)'],...dues()]]);
+ ws.push(['السجل',[['التاريخ','النوع','من','إلى','الأثار','في','ملاحظات'],...DB.log.map(e=>[e.date,e.type,e.from,e.to,e.athar,e.sources.map(id=>getS(id)?.name||id).join('، '),e.note])]]);
+ DB.sources.forEach(s=>ws.push(['العرضة الأصلية - '+s.name,[['ت','الاسم في الأصل','عدد الأثار','من ورثه أو يدير الماء (الأصل)','الاسم المحدّث','من يدير الماء الآن','تاريخ التحديث','ملاحظة'],...s.original.map((o,i)=>[i+1,o.n,o.a,o.h,o.u?o.u.n||'':'',o.u?o.u.h||'':'',o.u?o.u.d||'':'',o.u?o.u.note||'':''])]]));
+ const cell=v=>`<Cell><Data ss:Type="${typeof v==='number'?'Number':'String'}">${esc(v)}</Data></Cell>`;
+ const x=`<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x="urn:schemas-microsoft-com:office:excel">`+
+  ws.map(([n,rows])=>`<Worksheet ss:Name="${esc(n.slice(0,31))}"><Table>${rows.map(r=>`<Row>${r.map(cell).join('')}</Row>`).join('')}</Table><WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"><DisplayRightToLeft/></WorksheetOptions></Worksheet>`).join('')+`</Workbook>`;
+ download(x,`الفلج والطويان - ${today()}.xls`,'application/vnd.ms-excel');
+}
+
+addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+setInterval(()=>{if(DB&&state.tab==='home'&&!$('#ov').classList.contains('on'))render()},30000);
+async function boot(){
+ try{await Promise.race([IDB.open(),new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))]);useIDB=true;DB=await IDB.get('db')||null;fileH=await IDB.get('fileH')||null}catch(e){useIDB=false}
+ let moved=false;
+ if(!DB){DB=load();moved=!!DB&&useIDB} // نقل البيانات القديمة من تخزين المتصفح المحدود
+ if(!DB)DB=seed();
+ migrate();
+ if(useIDB){await IDB.set('db',DB).catch(()=>{});if(moved)try{localStorage.removeItem(KEY)}catch(e){}}
+ if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+ if(fileH&&canFile()){try{filePerm=(await fileH.queryPermission({mode:'readwrite'}))==='granted'}catch(e){filePerm=false}}
+ render();
+ if(MOBILE&&location.protocol.startsWith('http'))mobileInit();
+}
+boot();
+function mobileInit(){
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+ // ملف مُشارك من واتساب ← «الفلج والطويان»
+ if(/[?&]shared=1/.test(location.search)&&'caches' in window){
+  history.replaceState(null,'',location.pathname);
+  caches.open('falaj-share').then(async c=>{const k=new URL('shared-file',location.origin+location.pathname).href,r=await c.match(k);
+   if(r){const t=await r.text();await c.delete(k);applyData(t)}}).catch(()=>{});
+ }
+}
+</script>
+</body>
+</html>
