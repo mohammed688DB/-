@@ -1,5 +1,5 @@
-const CACHE = "falaj-5523d73b59";
-const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const CACHE = "falaj-81a4f52104";
+const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png"];
 // cache:"reload" = تُجلب ملفات الإصدار الجديد من الخادم مباشرة وليس من ذاكرة المتصفح المؤقتة
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE.map(u => new Request(u, { cache: "reload" }))))); self.skipWaiting(); });
 self.addEventListener("activate", e => {
